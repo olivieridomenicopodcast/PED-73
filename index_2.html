@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0c0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PED73">
+<title>PED73</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%230a0c0f'/%3E%3Crect x='14' y='14' width='152' height='152' fill='none' stroke='%2322d3ee' stroke-width='3'/%3E%3Ctext x='90' y='84' font-family='monospace' font-size='42' font-weight='700' fill='%23e7edf4' text-anchor='middle'%3EPED%3C/text%3E%3Ctext x='90' y='134' font-family='monospace' font-size='42' font-weight='700' fill='%2322d3ee' text-anchor='middle'%3E73%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0a0c0f; --panel:#11151a; --panel2:#161b22; --line:#232b35; --line2:#2f3945;
+  --tx:#dce4ee; --tx2:#93a1b1; --tx3:#5f6c7b;
+  --ok:#4ade80; --warn:#fbbf24; --bad:#f87171;
+  --f1:#f5a623; --f2:#22d3ee; --f3:#e879f9; --f4:#fb7185; --f5:#4ade80; --f6:#818cf8;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --sync-h:52px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--tx); font-family:var(--sans); font-size:15px; line-height:1.45;
+  padding-bottom:calc(var(--sync-h) + env(safe-area-inset-bottom));
+  overscroll-behavior-y:none;
+}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+.mono{font-family:var(--mono)}
+.wrap{max-width:820px;margin:0 auto;padding:0 12px}
+
+/* ---------- HEADER ---------- */
+header{
+  position:sticky;top:0;z-index:40;background:rgba(10,12,15,.94);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+  padding-top:env(safe-area-inset-top);
+}
+.hrow{display:flex;align-items:center;gap:10px;padding:10px 0 8px}
+.logo{font-family:var(--mono);font-weight:700;font-size:17px;letter-spacing:.06em}
+.logo b{color:var(--f2)}
+.hmeta{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--tx3);text-align:right;line-height:1.3}
+.bar{height:6px;background:var(--panel2);border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--f2),var(--f5));width:0;transition:width .18s linear}
+.barlab{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--tx2);margin:5px 0 8px;letter-spacing:.04em}
+nav{display:flex;gap:2px;border-top:1px solid var(--line);margin:0 -12px;padding:0 6px}
+nav button{
+  flex:1;padding:9px 2px 8px;font-family:var(--mono);font-size:11px;letter-spacing:.05em;
+  color:var(--tx3);border-bottom:2px solid transparent;text-transform:uppercase
+}
+nav button.on{color:var(--tx);border-bottom-color:var(--f2)}
+nav button{position:relative}
+.bdg{display:inline-block;margin-left:3px;font-size:9px;padding:0 3px;border-radius:6px;background:var(--line);color:var(--tx2);vertical-align:top}
+nav button.on .bdg{background:var(--f2);color:#04222a;font-weight:700}
+
+/* ---------- CODA ---------- */
+.qhint{font-size:12px;color:var(--tx3);margin:0 0 9px;line-height:1.45}
+.qlist{position:relative}
+.qitem{display:flex;align-items:center;gap:9px;padding:10px 10px;margin-bottom:7px;border:1px solid var(--line);border-radius:5px;background:var(--panel2);touch-action:pan-y}
+.qitem .qn{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--f1);width:18px;text-align:center;flex:none}
+.qitem .qgrip{font-family:var(--mono);font-size:14px;color:var(--tx3);flex:none;letter-spacing:-2px;padding:0 2px;cursor:grab}
+.qitem .qbody{flex:1;min-width:0}
+.qitem .qt{font-size:13.5px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qitem .qm{margin-top:3px;font-family:var(--mono);font-size:10px;color:var(--tx3);display:flex;gap:6px;align-items:center}
+.qitem .qacts{display:flex;gap:4px;flex:none}
+.qitem .qacts button{width:32px;height:30px;border:1px solid var(--line2);border-radius:4px;background:var(--panel);color:var(--tx3);font-size:12px}
+.qitem.drag{position:fixed;z-index:70;box-shadow:0 10px 26px rgba(0,0,0,.55);border-color:var(--f2);opacity:.97;margin:0;pointer-events:none}
+.qph{border:1px dashed var(--f2);border-radius:5px;background:#0e1a1d;margin-bottom:7px}
+.qnext{border-color:var(--f1)}
+.qarrow{display:flex;flex-direction:column;gap:1px;flex:none}
+.qarrow button{width:26px;height:16px;border:1px solid var(--line2);border-radius:3px;background:var(--panel);color:var(--tx3);font-size:8px;line-height:1;display:flex;align-items:center;justify-content:center}
+
+/* ---------- IDEE ---------- */
+.idea{padding:10px 11px;margin-bottom:7px;border:1px solid var(--line);border-radius:5px;background:var(--panel2)}
+.idea .irow{display:flex;align-items:flex-start;gap:8px}
+.idea .it{flex:1;min-width:0;font-size:14px;font-weight:600;line-height:1.3}
+.idea .in{margin-top:4px;font-size:12.5px;color:var(--tx2);line-height:1.45;white-space:pre-wrap}
+.idea .im{margin-top:6px;font-family:var(--mono);font-size:10px;color:var(--tx3);display:flex;gap:7px;align-items:center}
+.idea .iacts{display:flex;gap:4px;flex:none}
+.idea .iacts button{width:32px;height:30px;border:1px solid var(--line2);border-radius:4px;background:var(--panel);color:var(--tx3);font-size:12px}
+
+/* ---------- FILTRI ---------- */
+.filters{display:flex;gap:6px;flex-wrap:wrap;padding:10px 0 2px}
+.filters select{
+  background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 6px;
+  font-family:var(--mono);font-size:11px;color:var(--tx);flex:1;min-width:0
+}
+.fclear{font-family:var(--mono);font-size:12px;color:var(--tx3);padding:6px 8px;border:1px solid var(--line);border-radius:4px}
+
+/* ---------- SETTIMANE ---------- */
+.week{margin:16px 0 0;border:1px solid var(--line);border-radius:6px;background:var(--panel);overflow:hidden}
+.whead{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--panel2);border-bottom:1px solid var(--line);cursor:pointer}
+.wnum{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--bg);background:var(--tx2);border-radius:3px;padding:2px 6px;letter-spacing:.05em}
+.wnum.done{background:var(--ok)}
+.wtitle{font-family:var(--mono);font-size:12px;letter-spacing:.09em;color:var(--tx2);text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wcount{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--tx3)}
+.wcaret{font-size:10px;color:var(--tx3);transition:transform .15s}
+.week.closed .wcaret{transform:rotate(-90deg)}
+.week.closed .wbody{display:none}
+
+.card{display:flex;gap:9px;padding:10px 11px;border-top:1px solid var(--line);align-items:flex-start}
+.card:first-child{border-top:none}
+.card .fbar{width:3px;align-self:stretch;border-radius:2px;background:var(--tx3);flex:none}
+.cmain{flex:1;min-width:0;cursor:pointer}
+.crow1{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.cid{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.04em}
+.tag{font-family:var(--mono);font-size:10px;font-weight:700;padding:1px 5px;border-radius:3px;letter-spacing:.06em;border:1px solid}
+.day{font-family:var(--mono);font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em}
+.star{color:var(--f1);font-size:11px}
+.hook{margin-top:3px;font-size:13.5px;color:var(--tx);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cfoot{margin-top:5px;display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--tx3);letter-spacing:.04em}
+.plat{display:flex;gap:3px}
+.plat span{font-size:9px;padding:0 3px;border:1px solid var(--line2);border-radius:2px;color:var(--tx3)}
+.plat span.on{color:var(--bg);background:var(--f5);border-color:var(--f5)}
+
+.stbtn{
+  flex:none;align-self:center;width:96px;padding:7px 4px;border-radius:4px;border:1px solid var(--line2);
+  font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.05em;background:var(--panel2);color:var(--tx2);
+  text-align:center;line-height:1.25
+}
+.stbtn small{display:block;font-weight:400;font-size:8.5px;color:var(--tx3);letter-spacing:0}
+.st0{color:var(--tx2)}
+.st1{color:var(--warn);border-color:#4a3c14;background:#1c1811}
+.st2{color:var(--f2);border-color:#14414a;background:#101b1e}
+.st3{color:var(--ok);border-color:#1d4a2c;background:#0f1c14}
+
+/* ---------- PANNELLI GENERICI ---------- */
+.panel{margin:14px 0;border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:13px}
+.ph{font-family:var(--mono);font-size:11px;letter-spacing:.11em;color:var(--tx3);text-transform:uppercase;margin:0 0 10px}
+.big{font-family:var(--mono);font-size:30px;font-weight:700;line-height:1}
+.sub{font-family:var(--mono);font-size:11px;color:var(--tx3);letter-spacing:.05em;margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cell{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:10px}
+.btn{
+  display:inline-block;padding:9px 13px;border:1px solid var(--line2);border-radius:5px;background:var(--panel2);
+  font-family:var(--mono);font-size:12px;letter-spacing:.05em;color:var(--tx)
+}
+.btn.pri{background:var(--f2);border-color:var(--f2);color:#04222a;font-weight:700}
+.btn.dang{color:var(--bad);border-color:#4a1d1d}
+.btn.w{display:block;width:100%;text-align:center}
+label.fl{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px}
+input[type=text],input[type=number],input[type=url],input[type=password],input[type=date],textarea,select.full{
+  width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:4px;padding:9px 10px;color:var(--tx)
+}
+input[type=number],input[type=url],input[type=password],input[type=date]{font-family:var(--mono)}
+input[type=date]{min-height:42px}
+textarea{min-height:84px;resize:vertical;line-height:1.5}
+.hint{font-size:12px;color:var(--tx3);margin-top:6px;line-height:1.45}
+
+/* ---------- MODAL ---------- */
+.ov{position:fixed;inset:0;z-index:60;background:rgba(5,7,9,.72);display:none;overflow-y:auto;padding:0 0 70px}
+@media(min-width:640px){.ov{padding:24px 12px 70px}}
+.ov.on{display:block}
+.sheet{max-width:820px;margin:0 auto;background:var(--panel);border:1px solid var(--line2);border-radius:8px}
+.shead{position:sticky;top:0;background:var(--panel2);border-bottom:1px solid var(--line);padding:11px 13px;display:flex;align-items:center;gap:9px;z-index:2;border-radius:8px 8px 0 0}
+.shead .x{margin-left:auto;font-family:var(--mono);font-size:16px;color:var(--tx3);padding:0 4px}
+.sbody{padding:13px}
+.fld{margin-bottom:14px}
+.fld .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;color:var(--tx3);text-transform:uppercase;margin-bottom:4px}
+.fld .v{font-size:14px;line-height:1.5;color:var(--tx)}
+.fld .v.q{color:var(--tx);font-weight:600}
+.steps{display:flex;gap:4px;margin:2px 0 14px}
+.steps button{flex:1;padding:9px 2px;border:1px solid var(--line);border-radius:4px;background:var(--panel2);font-family:var(--mono);font-size:9.5px;letter-spacing:.03em;color:var(--tx3)}
+.steps button.done{color:var(--ok);border-color:#1d4a2c;background:#0f1c14}
+.steps button.cur{outline:1px solid var(--f2);color:var(--tx)}
+.pchk{display:flex;gap:7px}
+.pchk label{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 4px;border:1px solid var(--line2);border-radius:5px;background:var(--panel2);font-family:var(--mono);font-size:11px;color:var(--tx2)}
+.pchk input{accent-color:var(--f5);width:15px;height:15px}
+.pchk label.on{color:var(--ok);border-color:#1d4a2c;background:#0f1c14}
+
+/* ---------- KPI / storico ---------- */
+.hist{border:1px solid var(--line);border-radius:5px;overflow:hidden;margin-top:10px}
+.hitem{display:flex;gap:9px;align-items:center;padding:8px 10px;border-top:1px solid var(--line);background:var(--panel2)}
+.hitem:first-child{border-top:none}
+.hitem .d{font-family:var(--mono);font-size:11px;color:var(--tx2);flex:none}
+.hitem .n{flex:1;font-size:13px;color:var(--tx3);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hitem .rm{color:var(--tx3);font-family:var(--mono);font-size:14px;padding:0 3px}
+.tick{width:100%;padding:22px;border:1px solid var(--f1);border-radius:6px;background:#1c1508;color:var(--f1);font-family:var(--mono);font-size:19px;font-weight:700;letter-spacing:.08em}
+
+/* ---------- MANUALE ---------- */
+.helpb{font-family:var(--mono);font-size:13px;color:var(--tx3);background:var(--panel2);border:1px solid var(--line2);border-radius:5px;width:30px;height:28px;display:flex;align-items:center;justify-content:center;flex:none;margin-left:9px}
+.helpb.on{color:#04222a;background:var(--f2);border-color:var(--f2);font-weight:700}
+.mtop{margin:0 0 12px;font-size:13.5px;color:var(--tx2);line-height:1.55}
+.mtoc{display:flex;flex-wrap:wrap;gap:6px}
+.mtoc a{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--tx2);border:1px solid var(--line2);border-radius:4px;padding:6px 8px;text-decoration:none;background:var(--panel2)}
+.man{scroll-margin-top:132px;line-height:1.6}
+.man h3{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--f2);margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.man h4{font-size:13.5px;margin:18px 0 6px;color:var(--tx);font-weight:600}
+.man p{margin:0 0 10px;font-size:13.5px;color:var(--tx2)}
+.man b{color:var(--tx);font-weight:600}
+.man ul{margin:0 0 10px;padding-left:17px}
+.man li{font-size:13.5px;color:var(--tx2);margin-bottom:7px}
+.man .mrule{border-left:2px solid var(--f1);padding-left:10px;margin-top:12px}
+.k9{font-family:var(--mono),"Apple Color Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:11.5px;background:var(--panel2);border:1px solid var(--line2);border-radius:3px;padding:1px 5px;color:var(--tx);white-space:nowrap}
+.mstep{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.mstep:first-of-type{border-top:none}
+.mstep .mi{font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--f1);flex:none;width:78px;padding-top:3px;line-height:1.35}
+.mstep .mt{flex:1;font-size:13.5px;color:var(--tx2);line-height:1.5}
+
+/* ---------- SYNC BAR ---------- */
+.syncbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;height:calc(var(--sync-h) + env(safe-area-inset-bottom));
+  padding-bottom:env(safe-area-inset-bottom);
+  background:var(--panel2);border-top:1px solid var(--line2);display:flex;align-items:center;gap:8px;padding-left:12px;padding-right:12px
+}
+.syncbar .lab{font-family:var(--mono);font-size:10.5px;color:var(--tx3);letter-spacing:.05em;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.syncbar .dot{font-family:var(--mono);font-size:13px;flex:none}
+.sbtn{width:44px;height:34px;border:1px solid var(--line2);border-radius:5px;background:var(--panel);font-size:15px;color:var(--tx2);display:flex;align-items:center;justify-content:center;flex:none}
+.sbtn:active{background:var(--line)}
+.empty{padding:26px 12px;text-align:center;color:var(--tx3);font-family:var(--mono);font-size:12px}
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--sync-h) + 14px + env(safe-area-inset-bottom));
+  z-index:80;background:var(--panel2);border:1px solid var(--line2);border-radius:5px;padding:9px 14px;
+  font-family:var(--mono);font-size:12px;color:var(--tx);max-width:90%;text-align:center;display:none
+}
+.toast.on{display:block}
+@media(min-width:640px){ .stbtn{width:112px} body{font-size:15.5px} }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="hrow">
+      <div class="logo">PED<b>73</b></div>
+      <div class="hmeta" id="hmeta"></div>
+      <button class="helpb" id="help-btn" title="Manuale" aria-label="Manuale">?</button>
+    </div>
+    <div class="bar"><i id="progbar"></i></div>
+    <div class="barlab"><span id="proglab">—</span><span id="streaklab">—</span></div>
+    <nav>
+      <button data-view="plan" class="on">PIANO</button>
+      <button data-view="queue">CODA<span class="bdg" id="bdg-q">0</span></button>
+      <button data-view="idee">IDEE<span class="bdg" id="bdg-i">0</span></button>
+      <button data-view="time">TEMPO</button>
+      <button data-view="kpi">KPI</button>
+      <button data-view="set">DATI</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ PIANO ============ -->
+<section id="v-plan">
+  <div class="filters">
+    <select id="f-stato"><option value="">stato ·tutti</option></select>
+    <select id="f-format"><option value="">format ·tutti</option></select>
+    <select id="f-week"><option value="">sett. ·tutte</option></select>
+    <button class="fclear" id="f-clear">×</button>
+  </div>
+  <div id="weeks"></div>
+  <div class="panel">
+    <div class="ph">Aggiungi un video tuo</div>
+    <button class="btn w" id="add-video">+ NUOVO VIDEO</button>
+  </div>
+</section>
+
+<!-- ============ CODA ============ -->
+<section id="v-queue" hidden>
+  <div class="panel">
+    <div class="ph">Ordine di uscita</div>
+    <div class="grid3">
+      <div class="cell"><div class="big" id="q-n">0</div><div class="sub">IN CODA</div></div>
+      <div class="cell"><div class="big" style="font-size:19px" id="q-next">—</div><div class="sub">PROSSIMA USCITA</div></div>
+      <div class="cell"><div class="big" style="font-size:19px" id="q-slot">—</div><div class="sub">PROSSIMO SLOT</div></div>
+    </div>
+    <div class="hint" id="q-session"></div>
+  </div>
+  <div class="panel">
+    <div class="ph">Aggiungi alla coda</div>
+    <select class="full" id="q-pick"></select>
+    <button class="btn pri w" id="q-add" style="margin-top:9px">+ AGGIUNGI IN CODA</button>
+    <button class="btn w" id="q-fill" style="margin-top:8px">AGGIUNGI TUTTI I MONTATI</button>
+  </div>
+  <div class="panel">
+    <div class="ph">Coda</div>
+    <div class="qhint">Trascina dalla maniglia <b class="mono">⠿</b> (o tieni premuto un attimo sulla voce): resta sotto il dito, la sposti e la rilasci dove vuoi. In alternativa le frecce ▲▼. La <b>prima della lista</b> è la prossima che esce.</div>
+    <div class="qlist" id="q-list"></div>
+  </div>
+</section>
+
+<!-- ============ IDEE ============ -->
+<section id="v-idee" hidden>
+  <div class="panel">
+    <div class="ph">Contenitore idee</div>
+    <div class="grid2">
+      <div class="cell"><div class="big" id="i-n">0</div><div class="sub">IDEE IN CANTIERE</div></div>
+      <div class="cell"><div class="big" id="i-used" style="color:var(--tx2)">0</div><div class="sub">DIVENTATE VIDEO</div></div>
+    </div>
+    <label class="fl">Nuova idea</label>
+    <input type="text" id="i-title" placeholder="Hook o titolo al volo">
+    <label class="fl">Format (facoltativo)</label>
+    <select class="full" id="i-format"><option value="">format · da decidere</option></select>
+    <label class="fl">Nota (facoltativa)</label>
+    <textarea id="i-note" style="min-height:60px" placeholder="cosa mostrare, perché, dove l'hai vista…"></textarea>
+    <button class="btn pri w" id="i-add" style="margin-top:12px">+ AGGIUNGI</button>
+  </div>
+  <div class="panel">
+    <div class="ph">Idee</div>
+    <input type="text" id="i-search" placeholder="cerca un'idea…" style="margin-bottom:10px">
+    <div id="i-list"></div>
+  </div>
+</section>
+
+<!-- ============ TEMPO ============ -->
+<section id="v-time" hidden>
+  <div class="panel">
+    <div class="ph">Regola dei 20 minuti</div>
+    <div class="grid2">
+      <div class="cell"><div class="big" id="t-eff">0<span style="font-size:15px;color:var(--tx3)">'</span></div><div class="sub">MONTAGGIO EFFETTIVO</div></div>
+      <div class="cell"><div class="big" id="t-est" style="color:var(--tx2)">0<span style="font-size:15px;color:var(--tx3)">'</span></div><div class="sub">STIMA SUGLI STESSI</div></div>
+    </div>
+    <div class="grid3" style="margin-top:10px">
+      <div class="cell"><div class="big" style="font-size:22px" id="t-avg">—</div><div class="sub">MEDIA</div></div>
+      <div class="cell"><div class="big" style="font-size:22px" id="t-over">0</div><div class="sub">OLTRE 20'</div></div>
+      <div class="cell"><div class="big" style="font-size:22px" id="t-n">0</div><div class="sub">MISURATI</div></div>
+    </div>
+    <div class="hint" id="t-verdict"></div>
+  </div>
+  <div class="panel">
+    <div class="ph">Per format</div>
+    <div id="t-formats"></div>
+  </div>
+  <div class="panel">
+    <div class="ph">Streak · settimane complete consecutive</div>
+    <div class="grid2">
+      <div class="cell"><div class="big" id="t-streak">0</div><div class="sub">STREAK ATTUALE</div></div>
+      <div class="cell"><div class="big" id="t-best" style="color:var(--tx2)">0</div><div class="sub">RECORD</div></div>
+    </div>
+    <div class="hint">Una settimana conta solo se tutti i suoi video risultano PUBBLICATO.</div>
+  </div>
+</section>
+
+<!-- ============ KPI ============ -->
+<section id="v-kpi" hidden>
+  <div class="panel">
+    <div class="ph">Contatore "come si fa?"</div>
+    <div class="grid3" style="margin-bottom:12px">
+      <div class="cell"><div class="big" id="k-tot">0</div><div class="sub">TOTALE</div></div>
+      <div class="cell"><div class="big" id="k-7" style="color:var(--tx2)">0</div><div class="sub">ULTIMI 7 GG</div></div>
+      <div class="cell"><div class="big" id="k-30" style="color:var(--tx2)">0</div><div class="sub">ULTIMI 30 GG</div></div>
+    </div>
+    <button class="tick" id="k-add">+1 &nbsp;ME L'HANNO CHIESTO</button>
+    <label class="fl">Nota facoltativa (dove, chi, quale video)</label>
+    <input type="text" id="k-note" placeholder="es. commento su TikTok, video 006">
+    <div class="hint">KPI indipendente dai singoli video: è il contatore della Fase 2.</div>
+  </div>
+  <div class="panel">
+    <div class="ph">Storico</div>
+    <div id="k-hist"></div>
+  </div>
+</section>
+
+<!-- ============ DATI ============ -->
+<section id="v-set" hidden>
+  <div class="panel">
+    <div class="ph">Sincronizzazione GitHub Gist</div>
+    <div id="s-state" class="hint"></div>
+    <div class="grid2" style="margin-top:10px">
+      <button class="btn" id="s-pull2">⬇ PULL</button>
+      <button class="btn" id="s-push2">⬆ PUSH</button>
+    </div>
+    <button class="btn w" id="s-setup2" style="margin-top:8px">⚙ CONFIGURA TOKEN</button>
+  </div>
+  <div class="panel">
+    <div class="ph">Export / Import manuale</div>
+    <div class="grid2">
+      <button class="btn" id="d-exp">↓ ESPORTA JSON</button>
+      <button class="btn" id="d-imp">↑ IMPORTA JSON</button>
+    </div>
+    <input type="file" id="d-file" accept="application/json,.json" hidden>
+    <div class="hint">L'export contiene stato, note, contatore, coda d'uscita, idee e video aggiunti da te. L'import sostituisce tutto.</div>
+  </div>
+  <div class="panel">
+    <div class="ph">Manutenzione</div>
+    <div class="hint" id="d-info"></div>
+    <button class="btn w" id="d-seed" style="margin-top:10px">RICARICA VIDEO DEL PIANO MANCANTI</button>
+    <button class="btn w dang" id="d-reset" style="margin-top:8px">AZZERA TUTTO</button>
+  </div>
+  <div class="panel">
+    <div class="ph">Installazione</div>
+    <div class="hint">Android/Chrome: menu ⋮ → «Installa app». iPhone/Safari: Condividi → «Aggiungi a Home». Funziona offline dopo la prima apertura.</div>
+    <button class="btn w" id="d-install" style="margin-top:10px" hidden>INSTALLA PED73</button>
+  </div>
+</section>
+
+
+<!-- ============ MANUALE ============ -->
+<section id="v-guida" hidden>
+  <div class="panel">
+    <div class="ph">Manuale di PED73</div>
+    <p class="mtop">Tutto quello che fa l'app, scheda per scheda. Sta dentro l'app apposta: funziona anche offline, quando ti serve davvero.</p>
+    <div class="mtoc">
+      <a href="#g0">Come funziona</a>
+      <a href="#g1">Barra in alto</a>
+      <a href="#g2">Piano</a>
+      <a href="#g3">Coda</a>
+      <a href="#g4">Idee</a>
+      <a href="#g5">Tempo</a>
+      <a href="#g6">KPI</a>
+      <a href="#g7">Dati</a>
+      <a href="#g8">Sync</a>
+      <a href="#g9">Settimana tipo</a>
+      <a href="#g10">Se si rompe</a>
+    </div>
+  </div>
+
+  <div class="panel man" id="g0">
+    <h3>Come funziona, in due minuti</h3>
+    <p>PED73 è una pagina sola. Non c'è un server, non c'è un account, non c'è niente da accendere: apri, funziona, anche in aereo.</p>
+    <p><b>I 24 video del piano sono scritti dentro l'app.</b> Il tuo lavoro sopra — stati, date, note, minuti, idee — sta nella memoria del browser di <b>questo</b> dispositivo. Ricaricare la pagina non cancella niente, e se un giorno il piano cresce i video nuovi si aggiungono senza toccare quello che hai già fatto.</p>
+    <p><b>La regola d'oro:</b> la memoria del browser è per dispositivo. Telefono e PC non si parlano da soli. A collegarli è la sync GitHub: <span class="k9">⬇</span> prima di lavorare, <span class="k9">⬆</span> quando hai finito.</p>
+    <h4>Le sei schede in una riga ciascuna</h4>
+    <ul>
+      <li><b>PIANO</b> — cosa devi girare, a che punto è.</li>
+      <li><b>CODA</b> — cosa esce, e in che ordine.</li>
+      <li><b>IDEE</b> — quello che ti viene in mente e non vuoi perdere.</li>
+      <li><b>TEMPO</b> — se stai rispettando la regola dei 20 minuti.</li>
+      <li><b>KPI</b> — quante volte ti hanno chiesto «come si fa?».</li>
+      <li><b>DATI</b> — sync, backup, manutenzione.</li>
+    </ul>
+  </div>
+
+  <div class="panel man" id="g1">
+    <h3>La barra in alto</h3>
+    <p>C'è sempre, in ogni scheda, e ti dice tre cose senza che tu debba cercarle.</p>
+    <div class="mstep"><div class="mi">data + conta</div><div class="mt">Oggi, e quanti video ci sono in piano in tutto (24 più quelli che aggiungi tu).</div></div>
+    <div class="mstep"><div class="mi">barra</div><div class="mt">Quanti dei tuoi video sono <b>pubblicati</b>, in numero e in percentuale. È l'unica misura di avanzamento vera: girato e montato non contano finché non esce.</div></div>
+    <div class="mstep"><div class="mi">STREAK</div><div class="mt">Settimane di fila in cui hai pubblicato <b>tutti e tre</b> i video. Basta un buco e riparte.</div></div>
+    <div class="mstep"><div class="mi">?</div><div class="mt">Questo manuale. Ci torni da qualsiasi scheda.</div></div>
+  </div>
+
+  <div class="panel man" id="g2">
+    <h3>Scheda PIANO</h3>
+    <p>È la casa. Le otto settimane in ordine, ognuna coi suoi tre video.</p>
+
+    <h4>Filtri</h4>
+    <p>Tre menù: <b>stato</b>, <b>format</b>, <b>settimana</b>. Si combinano fra loro, e le settimane che restano vuote spariscono invece di restare lì a fare rumore. La <span class="k9">×</span> azzera tutto.</p>
+    <p>Usali così: <b>stato « da girare »</b> la domenica, per sapere cosa devi registrare. <b>Stato « montato »</b> quando cerchi cosa pubblicare. <b>Format</b> quando vuoi controllare di non aver ammassato tre F1 di fila.</p>
+
+    <h4>Il titolo della settimana</h4>
+    <p>Tap sulla riga <span class="k9">W3 · IL MULTIPOTENZIALE</span> per chiudere o aprire quella settimana. Il conteggio a destra (<span class="k9">2/3</span>) sono i pubblicati. Quando la settimana è completa, la sigla diventa verde.</p>
+
+    <h4>La card di un video</h4>
+    <ul>
+      <li><b>Barra colorata a sinistra</b> — il format. Stesso colore ovunque nell'app: impari a riconoscerli in due giorni.</li>
+      <li><b>001</b> · <b>F1</b> · <b>MAR</b> — id, format, giorno previsto. La <b>★</b> segna i tre video chiave (004, 006, 024).</li>
+      <li><b>L'hook</b> — la prima riga del video. È quello che ti serve per ricordarti di cosa si tratta.</li>
+      <li><b>In basso</b> — minuti effettivi su stimati, le tre piattaforme (verdi se pubblicato lì), e <span class="k9">● GIR 23/08</span>: la data di registrazione, quella che ti serve per ritrovare la clip in galleria.</li>
+    </ul>
+
+    <h4>Il pulsante di stato — un tap, un passo avanti</h4>
+    <p>A destra della card. Ogni tap avanza di uno stato e salva la data del passaggio:</p>
+    <div class="mstep"><div class="mi">DA GIRARE</div><div class="mt">Esiste solo nel piano.</div></div>
+    <div class="mstep"><div class="mi">GIRATO</div><div class="mt">Le clip esistono. Salva la data di registrazione — <b>correggibile</b>, vedi sotto.</div></div>
+    <div class="mstep"><div class="mi">MONTATO</div><div class="mt">Pronto da pubblicare. <b>Entra da solo nella CODA.</b></div></div>
+    <div class="mstep"><div class="mi">PUBBLICATO</div><div class="mt">È fuori. <b>Esce da solo dalla coda</b> e conta nella barra di avanzamento.</div></div>
+    <p>Sbagliato tap? Apri il dettaglio: la fila dei quattro stati in cima è cliccabile, torni indietro da lì.</p>
+
+    <h4>Il dettaglio — tap sulla card</h4>
+    <ul>
+      <li><b>I quattro stati</b> con la data di ciascuno. Cliccabili per correggere.</li>
+      <li><b>Data di registrazione</b> — modificabile. Di default è il giorno in cui hai premuto GIRATO, ma se giri di domenica e apri l'app il martedì, qui ci metti la domenica. Serve a ritrovare la clip in galleria, quindi deve essere quella vera. Se la imposti su un video ancora da girare, passa a GIRATO da solo.</li>
+      <li><b>Format, hook, cosa, perché</b> — il contenuto del piano, in sola lettura qui.</li>
+      <li><b>Nota di piano</b> in ambra — gli avvertimenti del piano editoriale (l'audio da usare, la CTA, le cautele).</li>
+      <li><b>Pubblicato su</b> — TikTok, Reels, Shorts sono <b>tre spunte separate</b>: capita di pubblicare su uno e non sugli altri, e così te ne accorgi.</li>
+      <li><b>Minuti effettivi</b> — quanto ci hai messo davvero a montare. Alimenta la scheda TEMPO. Se non lo scrivi, quel video non viene conteggiato.</li>
+      <li><b>Link al video pubblicato</b> — incollalo e compare il collegamento per riaprirlo.</li>
+      <li><b>Note mie</b> — cosa non ha funzionato, cosa rifaresti. Testo libero, si salva mentre scrivi.</li>
+      <li><b>Modifica i campi di piano</b> — per cambiare hook, cosa, perché, settimana, stima. Sì, anche sui 24 originali.</li>
+    </ul>
+
+    <h4>Aggiungere un video tuo</h4>
+    <p>In fondo alla scheda: <span class="k9">+ NUOVO VIDEO</span>. L'id è già proposto (025, 026…), scegli settimana, giorno e format e vive esattamente come gli altri.</p>
+
+    <h4>Cambiare numero o posto a un video</h4>
+    <p>Nell'editor (<span class="k9">Modifica i campi di piano</span>) hai due strade, e servono a cose diverse.</p>
+    <div class="mstep"><div class="mi">⇄ SCAMBIA</div><div class="mt"><b>Il caso normale.</b> Vuoi che il 002 vada dove sta il 006 e viceversa: scegli l'altro video dal menù e premi. Si scambiano <b>id, settimana e giorno</b>. Contenuto, stato, date, note e minuti <b>restano attaccati al proprio video</b> — se avevi già girato quel contenuto, resta girato anche col numero nuovo. Anche la coda si aggiorna da sola.</div></div>
+    <div class="mstep"><div class="mi">CAMPO ID</div><div class="mt"><b>Rinomina.</b> Il campo ID è scrivibile: cambi il numero e basta, senza toccare nessun altro video. Serve soprattutto a numerare come vuoi i video aggiunti da te. Se il numero è già occupato l'app te lo dice e ti manda allo scambio, invece di sovrascrivere in silenzio.</div></div>
+    <p>Un video del piano che rinomini o elimini <b>non ricompare da solo</b> al riavvio: l'app si ricorda che l'hai tolto di mezzo. Se lo rivuoi, DATI → « Ricarica video del piano mancanti ».</p>
+  </div>
+
+  <div class="panel man" id="g3">
+    <h3>Scheda CODA</h3>
+    <p>Il piano dice <b>quale settimana</b>. La coda dice <b>in che ordine escono davvero</b> le cose che hai già pronte — che non è quasi mai lo stesso ordine.</p>
+    <h4>In cima</h4>
+    <ul>
+      <li><b>In coda</b> — quanti video pronti hai in canna.</li>
+      <li><b>Prossima uscita</b> — il primo della lista. Basta guardare qui.</li>
+      <li><b>Prossimo slot</b> — il prossimo martedì, giovedì o sabato a partire da oggi.</li>
+      <li><b>Ultima sessione di registrazione</b> — quando hai girato l'ultima volta e quanti video hai fatto quel giorno. Ti dice se sei in pari con la domenica.</li>
+    </ul>
+    <h4>Come ci entrano i video</h4>
+    <p>Da soli, quando li segni <b>MONTATO</b>. Non devi ricordarti niente. Se vuoi forzare la mano: <span class="k9">+ AGGIUNGI IN CODA</span> sceglie da quelli non ancora pubblicati, e <span class="k9">AGGIUNGI TUTTI I MONTATI</span> recupera in un colpo quelli che avevi tolto.</p>
+    <p>Nella coda entrano <b>solo video del piano</b>, niente voci scritte a mano: così il contatore dei pubblicati non mente mai. Se ti viene in mente qualcosa di nuovo, prima diventa un video (o un'idea da promuovere).</p>
+    <h4>Riordinare</h4>
+    <p>Tre modi, scegli quello che ti viene comodo:</p>
+    <ul>
+      <li><b>Trascina dalla maniglia</b> <span class="k9">⠿</span> — parte subito.</li>
+      <li><b>Tieni premuto</b> un attimo sulla voce — poi resta sotto il dito.</li>
+      <li><b>Frecce ▲▼</b> — un posto per volta, sempre affidabili.</li>
+    </ul>
+    <p>Il <b>numero arancione</b> a sinistra è la posizione, e il primo della lista ha il bordo evidenziato: è quello che esce al prossimo slot.</p>
+    <h4>I due pulsanti su ogni riga</h4>
+    <div class="mstep"><div class="mi">✓</div><div class="mt">L'ho pubblicato. Lo segna PUBBLICATO e lo toglie dalla coda in un colpo solo. È la scorciatoia che userai di più: pubblichi, apri la coda, ✓.</div></div>
+    <div class="mstep"><div class="mi">✕</div><div class="mt">Toglilo dalla coda senza cambiargli stato. Resta montato, semplicemente non esce adesso.</div></div>
+  </div>
+
+  <div class="panel man" id="g4">
+    <h3>Scheda IDEE</h3>
+    <p>Un contenitore, punto. Nessuno stato da gestire, nessuna approvazione: qui dentro finisce quello che ti viene in mente mentre fai altro, prima che evapori.</p>
+    <ul>
+      <li><b>Titolo</b> — scrivilo come un hook se ci riesci, così è già mezzo lavoro fatto. Invio aggiunge senza toccare il pulsante.</li>
+      <li><b>Format</b> — facoltativo. Se sai già che è un F4, mettilo; se no lascialo « da decidere ».</li>
+      <li><b>Nota</b> — cosa mostrare, perché, dove ti è venuta.</li>
+      <li><b>Cerca</b> — filtra su titolo e nota. Utile quando le idee diventano trenta.</li>
+    </ul>
+    <h4>I tre pulsanti su ogni idea</h4>
+    <div class="mstep"><div class="mi">⇄</div><div class="mt"><b>Diventa un video del piano.</b> Apre l'editor già compilato: hook = titolo, cosa = nota, format se l'avevi messo. Tu scegli solo la settimana. Al salvataggio l'idea esce dal contenitore e conta nel riquadro « diventate video ».</div></div>
+    <div class="mstep"><div class="mi">✎</div><div class="mt">Riporta l'idea nel modulo in alto per correggerla. Il pulsante diventa « SALVA MODIFICA ».</div></div>
+    <div class="mstep"><div class="mi">✕</div><div class="mt">Elimina, con conferma.</div></div>
+    <p>Il posto giusto per il <b>014</b>: quando i commenti ti buttano dentro le cazzate da costruire, le parcheggi qui e al momento del <b>018</b> scegli la peggiore.</p>
+  </div>
+
+  <div class="panel man" id="g5">
+    <h3>Scheda TEMPO</h3>
+    <p>Serve a una domanda sola: <b>stai rispettando la regola dei 20 minuti?</b></p>
+    <p>Conta <b>solo i video di cui hai scritto i minuti effettivi</b> nel dettaglio. È voluto: se contasse tutti e 24, a inizio piano sembreresti sempre in anticipo di ore.</p>
+    <ul>
+      <li><b>Montaggio effettivo</b> vs <b>stima sugli stessi</b> — mele con mele, sempre lo stesso gruppo di video.</li>
+      <li><b>Media</b> — verde sotto i 20', rossa sopra. È il numero che conta.</li>
+      <li><b>Oltre 20'</b> — quanti singoli video hanno sforato, anche se la media regge.</li>
+      <li><b>Misurati</b> — su quanti video si basa il calcolo. Se è basso, prendi tutto con le pinze.</li>
+      <li><b>Per format</b> — avanzamento e media di ciascuno. È qui che scopri che gli F6 ti mangiano il triplo del tempo degli F5, e decidi di conseguenza.</li>
+      <li><b>Streak</b> — settimane complete di fila, più il tuo record.</li>
+    </ul>
+  </div>
+
+  <div class="panel man" id="g6">
+    <h3>Scheda KPI — «come si fa?»</h3>
+    <p>Il contatore della Fase 2, e vive da solo: <b>non è legato a nessun video</b>. Ogni volta che qualcuno ti chiede come costruisci le app — nei commenti, in DM, di persona, al lavoro — premi <span class="k9">+1</span>.</p>
+    <p>La nota è facoltativa ma vale la pena: « commento TikTok, video 006 » tra due mesi ti dice <b>quali video</b> generano la domanda. E quello è il segnale che ti dice quando l'insegnamento può entrare in bio.</p>
+    <p>Totale, ultimi 7 giorni, ultimi 30. Lo storico sotto è completo, con data e ora, e ogni voce si cancella se hai premuto per sbaglio.</p>
+  </div>
+
+  <div class="panel man" id="g7">
+    <h3>Scheda DATI</h3>
+    <h4>Sincronizzazione GitHub Gist</h4>
+    <p>Gli stessi <span class="k9">⬇</span> <span class="k9">⬆</span> <span class="k9">⚙</span> della barra in fondo, ma con lo stato scritto per esteso: se sei collegato, a quale Gist, e cosa è andato storto l'ultima volta.</p>
+    <h4>Export / Import manuale</h4>
+    <p><b>Esporta</b> scarica un file <span class="k9">ped73_AAAAMMGG.json</span> con dentro tutto: stati, date, note, minuti, coda, idee, contatore, video tuoi. Backup vero, da tenere da parte prima di fare esperimenti.</p>
+    <p><b>Importa</b> lo rimette dentro. Attenzione: <b>sostituisce tutto</b>, non fonde. C'è la conferma prima di procedere.</p>
+    <h4>Manutenzione</h4>
+    <ul>
+      <li><b>Ricarica video del piano mancanti</b> — rimette i video del piano che hai eliminato o rinominato. Non tocca quelli che ci sono già, quindi puoi premerlo senza paura.</li>
+      <li><b>Azzera tutto</b> — riporta il piano a zero e cancella coda, idee, contatore e video tuoi. Doppia conferma. Fai un export prima.</li>
+    </ul>
+    <h4>Installazione</h4>
+    <p>Android: menu <span class="k9">⋮</span> → « Installa app ». iPhone: Condividi → « Aggiungi a Home ». Da lì si apre a schermo pieno, senza barra del browser, e funziona offline.</p>
+  </div>
+
+  <div class="panel man" id="g8">
+    <h3>La barra sync, in fondo allo schermo</h3>
+    <p>C'è sempre, in ogni scheda. A sinistra il semaforo:</p>
+    <div class="mstep"><div class="mi" style="color:var(--ok)">✓ verde</div><div class="mt">Collegato, ultima operazione andata bene.</div></div>
+    <div class="mstep"><div class="mi" style="color:var(--warn)">⏳ giallo</div><div class="mt">Sta lavorando, o c'è il token ma manca ancora il collegamento al Gist.</div></div>
+    <div class="mstep"><div class="mi" style="color:var(--bad)">✗ rosso</div><div class="mt">Qualcosa è fallito. Il motivo è scritto accanto.</div></div>
+    <h4>I tre pulsanti</h4>
+    <ul>
+      <li><span class="k9">⚙</span> <b>Setup</b> — incolli il token GitHub. Serve un Personal Access Token con <b>il solo</b> scope <span class="k9">gist</span>. Resta su questo dispositivo, non è mai nel codice: per questo il repo può stare pubblico. Al primo collegamento l'app cerca un Gist che contiene <span class="k9">ped73_db.json</span> e, se non lo trova, ne crea uno <b>privato</b>.</li>
+      <li><span class="k9">⬇</span> <b>Pull</b> — scarica i dati dal Gist e <b>sostituisce</b> quelli locali. Con conferma.</li>
+      <li><span class="k9">⬆</span> <b>Push</b> — manda i dati locali sul Gist.</li>
+    </ul>
+    <p><b>Non c'è sync automatica, ed è voluto.</b> L'automatismo, su due dispositivi, non risolve i conflitti: li nasconde finché non ti mangia una serata di lavoro. Meglio due tap consapevoli.</p>
+    <p class="mrule"><b>Il flusso, sempre lo stesso:</b> <span class="k9">⬇</span> appena apri → lavori → <span class="k9">⬆</span> quando hai finito. Se ti dimentichi il pull e modifichi, hai due versioni diverse e una delle due la perdi.</p>
+  </div>
+
+  <div class="panel man" id="g9">
+    <h3>Una settimana tipo, dentro l'app</h3>
+    <div class="mstep"><div class="mi">DOMENICA</div><div class="mt">Filtro <b>stato « da girare »</b>: hai davanti solo quello che manca. Registri, poi tap sul pulsante di stato di ognuno → <b>GIRATO</b>. Se registri e segni in un altro giorno, correggi la data di registrazione nel dettaglio: è quella che userai per ritrovare le clip.</div></div>
+    <div class="mstep"><div class="mi">MARTEDÌ</div><div class="mt">Monti. Tap → <b>MONTATO</b>: entra in coda da solo. Scrivi i <b>minuti effettivi</b> mentre ce l'hai in mente, non dopo. Pubblichi, apri <b>CODA</b>, <span class="k9">✓</span>. Spunti le tre piattaforme nel dettaglio.</div></div>
+    <div class="mstep"><div class="mi">GIOVEDÌ</div><div class="mt">Stessa cosa, ma è il one-take: se i minuti effettivi superano i 10, qualcosa non va nel metodo, non nel video.</div></div>
+    <div class="mstep"><div class="mi">SABATO</div><div class="mt">Il leggero. Chiudendo il terzo, la settimana diventa verde e lo <b>streak</b> sale di uno.</div></div>
+    <div class="mstep"><div class="mi">SPARSI</div><div class="mt">Rispondi ai commenti. Ogni « ma come si fa? » è un <span class="k9">+1</span> in KPI. Ogni spunto è un'idea in <b>IDEE</b>.</div></div>
+    <div class="mstep"><div class="mi">FINE MESE</div><div class="mt">Apri <b>TEMPO</b> e guarda la media. Se è sopra i 20', il problema non è che sei lento: è che stai scegliendo video troppo complicati.</div></div>
+  </div>
+
+  <div class="panel man" id="g10">
+    <h3>Se qualcosa non torna</h3>
+    <h4>Ho aggiornato l'app ma sul telefono vedo la versione vecchia</h4>
+    <p>È il service worker che serve la copia in cache. Alza la versione in <span class="k9">sw.js</span> (<span class="k9">ped73-v4</span> → <span class="k9">v5</span>) e ricarica. In alternativa: disinstalla e reinstalla la PWA.</p>
+    <h4>Push o pull falliti</h4>
+    <p>Il messaggio dice il motivo. <span class="k9">401</span> o <span class="k9">403</span>: token scaduto, revocato o senza lo scope <span class="k9">gist</span> — rifallo e reincollalo in <span class="k9">⚙</span>. <span class="k9">404</span>: il Gist non esiste più, svuota il campo Gist ID e ricollega. Nessuna risposta: sei offline, l'app continua a funzionare in locale.</p>
+    <h4>Telefono e PC hanno dati diversi</h4>
+    <p>Hai lavorato su entrambi senza pull. Decidi quale versione è quella buona, fai <span class="k9">⬆</span> da lì e <span class="k9">⬇</span> sull'altro. Non c'è fusione automatica: sarebbe peggio.</p>
+    <h4>Ho cancellato un video del piano per sbaglio</h4>
+    <p>DATI → « Ricarica video del piano mancanti ». Torna al suo posto col contenuto originale, ma lo stato di avanzamento che aveva è perso.</p>
+    <h4>Il contatore dei minuti è vuoto</h4>
+    <p>Normale: conta solo i video di cui hai scritto i minuti effettivi. Aprine uno e compilalo.</p>
+  </div>
+
+  <div class="panel">
+    <button class="btn w pri" id="g-back">← TORNA AL PIANO</button>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ DETTAGLIO VIDEO ============ -->
+<div class="ov" id="ov-video"><div class="sheet"><div class="shead">
+  <span class="cid mono" id="dv-id">—</span>
+  <span class="tag" id="dv-tag">—</span>
+  <span class="day" id="dv-day"></span>
+  <button class="x" data-close="ov-video">✕</button>
+</div><div class="sbody" id="dv-body"></div></div></div>
+
+<!-- ============ EDITOR VIDEO ============ -->
+<div class="ov" id="ov-edit"><div class="sheet"><div class="shead">
+  <span class="mono" style="font-size:12px;letter-spacing:.09em" id="de-title">NUOVO VIDEO</span>
+  <button class="x" data-close="ov-edit">✕</button>
+</div><div class="sbody">
+  <div class="grid2">
+    <div><label class="fl">ID</label><input type="text" id="de-id" placeholder="025"></div>
+    <div><label class="fl">Settimana</label><select class="full" id="de-week"></select></div>
+  </div>
+  <div id="de-swaprow" hidden>
+    <label class="fl">Scambia di posto con un altro video</label>
+    <div class="grid2">
+      <select class="full" id="de-swap"></select>
+      <button class="btn" id="de-swapgo">⇄ SCAMBIA</button>
+    </div>
+    <div class="hint">Si scambiano <b>id, settimana e giorno</b>. Contenuto, stato, note e minuti restano attaccati al proprio video. Le modifiche non salvate qui sopra vanno perse.</div>
+  </div>
+  <div class="grid2">
+    <div><label class="fl">Giorno</label><select class="full" id="de-day"><option>mar</option><option>gio</option><option>sab</option><option>—</option></select></div>
+    <div><label class="fl">Format</label><select class="full" id="de-format"></select></div>
+  </div>
+  <label class="fl">Hook</label><input type="text" id="de-hook">
+  <label class="fl">Cosa</label><textarea id="de-cosa"></textarea>
+  <label class="fl">Perché</label><textarea id="de-perche"></textarea>
+  <div class="grid2">
+    <div><label class="fl">Minuti stimati</label><input type="number" id="de-est" min="0" step="1"></div>
+    <div><label class="fl">Video chiave ⭐</label><select class="full" id="de-key"><option value="0">no</option><option value="1">sì</option></select></div>
+  </div>
+  <label class="fl">Nota di piano (facoltativa)</label><textarea id="de-nota" style="min-height:56px"></textarea>
+  <button class="btn pri w" id="de-save" style="margin-top:16px">SALVA</button>
+  <button class="btn w dang" id="de-del" style="margin-top:8px" hidden>ELIMINA QUESTO VIDEO</button>
+</div></div></div>
+
+<!-- ============ SETUP TOKEN ============ -->
+<div class="ov" id="ov-gh"><div class="sheet"><div class="shead">
+  <span class="mono" style="font-size:12px;letter-spacing:.09em">SINCRONIZZAZIONE GITHUB</span>
+  <button class="x" data-close="ov-gh">✕</button>
+</div><div class="sbody">
+  <label class="fl">Personal Access Token</label>
+  <input type="password" id="gh-token" placeholder="ghp_… oppure github_pat_…" autocomplete="off" spellcheck="false">
+  <div class="hint">Token classico con il solo scope <b>gist</b>, oppure fine-grained con permesso <b>Gists: Read and write</b>. Resta in localStorage su questo dispositivo, non finisce mai nel codice.</div>
+  <label class="fl">Gist ID (facoltativo)</label>
+  <input type="text" id="gh-gist" placeholder="vuoto = cerca o crea da solo" spellcheck="false">
+  <div class="hint">File cercato/creato nel Gist: <b class="mono" id="gh-fname"></b></div>
+  <button class="btn pri w" id="gh-save" style="margin-top:16px">SALVA E COLLEGA</button>
+  <button class="btn w dang" id="gh-forget" style="margin-top:8px">DIMENTICA TOKEN</button>
+  <div class="hint" id="gh-log" style="margin-top:12px"></div>
+</div></div></div>
+
+<!-- ============ SYNC BAR ============ -->
+<div class="syncbar">
+  <span class="dot" id="s-dot">✗</span>
+  <span class="lab" id="s-lab">sync non configurata</span>
+  <button class="sbtn" id="s-pull" title="Pull">⬇</button>
+  <button class="sbtn" id="s-push" title="Push">⬆</button>
+  <button class="sbtn" id="s-setup" title="Setup">⚙</button>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+"use strict";
+/* ============================================================
+   PED73 — piano editoriale 8 settimane
+   Dati seed hardcoded, stato utente in localStorage.
+   ============================================================ */
+
+const APP='PED73', LSKEY='ped73_db', TKEY='ped73_gh_token', GKEY='ped73_gist_id';
+const GIST_FILE='ped73_db.json';
+const SEED_VERSION=1;
+
+const STATI=['DA GIRARE','GIRATO','MONTATO','PUBBLICATO'];
+const STCLS=['st0','st1','st2','st3'];
+
+const FORMATS={
+ F1:{n:'MI SERVIVA X → ME LA SONO FATTA',c:'--f1',note:'Colonna portante'},
+ F2:{n:'RADIO SPIEGATA DA NERD',c:'--f2',note:'Il ponte'},
+ F3:{n:"CLAUDE, COSTRUISCI 'STA CAZZATA",c:'--f3',note:'L’inutile, il più algoritmico'},
+ F4:{n:'COLLAUDO FALLITO',c:'--f4',note:'Il più umano. Audio: la tua musica'},
+ F5:{n:'IL MIO MONDO',c:'--f5',note:'Multipotenziale'},
+ F6:{n:"COME L'HO FATTA",c:'--f6',note:'Unico educativo, dose minoritaria'}
+};
+const WEEKS={1:'IL RIBALTAMENTO',2:'LA TESI',3:'IL MULTIPOTENZIALE',4:'LA VITA VERA',
+ 5:'IL MESTIERE',6:'LA COMMUNITY',7:'IL PROFESSIONISTA',8:'IL PRIMO SEME'};
+
+const SEED=[
+{id:'001',week:1,day:'mar',format:'F1',est:15,key:0,
+ hook:'Ho trasformato il mio hobby in una caccia al tesoro mondiale.',
+ cosa:'Pile-Up DX World Tracker. Due secondi di TS-2000 acceso, poi tutto sullo schermo: la mappa che si colora, i punti, la rarità, la classifica. Chiusura: «questa app non esisteva, quindi me la sono fatta».',
+ perche:'È il video-ponte. Testa la teoria del ribaltamento con lo strumento più impressionante che hai già pronto. Dire «il mio hobby» e non «la radio» è deliberato: non filtra nessuno nei primi due secondi.'},
+{id:'002',week:1,day:'gio',format:'F2',est:10,key:0,
+ hook:'Esiste un hobby dove collezioni paesi come i Pokémon. E nessun nerd lo conosce.',
+ cosa:'Il DXCC spiegato come un Pokédex, con la mappa che si riempie. One-take davanti alla radio.',
+ perche:'Zero nozioni tecniche, solo la meccanica di gioco. È il format ponte nella sua forma più pura.'},
+{id:'003',week:1,day:'sab',format:'F4',est:10,key:0,
+ hook:'Ho perso due ore. La colpa era di due millimetri.',
+ cosa:'Il cavo Digirig staccato. Racconti la storia, mostri il colpevole in mano, fine. Audio: la tua musica.',
+ perche:'Non serve che nessuno sappia cosa sia il CAT — funziona come storia. Ed è il primo segnale che qui dentro si mostrano anche i fallimenti.',
+ nota:'Audio: TheMACSrPOO.'},
+{id:'004',week:2,day:'mar',format:'F1',est:15,key:1,
+ hook:'La tua app preferita fa il 70% di quello che ti serve. Il 30% che manca è sempre lo stesso.',
+ cosa:'Il CRM che ti sei fatto. Mostri il tuo modo di gestire clienti e denaro, che nessuna app faceva come volevi tu.',
+ perche:'È la tesi di tutto il progetto — le app sono generaliste, quindi non sono fatte per nessuno in particolare. È l’unico video che parla di chi guarda invece che di te. Montalo con calma, è quello che resterà fissato.',
+ nota:'VIDEO DA FISSARE IN CIMA AL PROFILO.'},
+{id:'005',week:2,day:'gio',format:'F3',est:15,key:0,
+ hook:'Mi sono fatto un ministero.',
+ cosa:'Ministero degli Affari Inesistenti. Nessuna spiegazione, nessuna utilità, nessuna morale.',
+ perche:'Dice «qui dentro si costruisce anche roba assurda». È il video che dimostra che non sei un profilo-pubblicità.'},
+{id:'006',week:2,day:'sab',format:'F2',est:10,key:1,
+ hook:'Ogni striscia che vedi scendere è una persona che sta parlando in questo momento.',
+ cosa:'Il waterfall. Lo lasci scorrere qualche secondo (sembra Matrix, puoi anche dirlo — ma dopo), poi la rivelazione: non ti serve una radio, ti serve un sito. Chiudi con «apri questo e ascolti il mondo, adesso». Link al WebSDR nel commento fissato.',
+ perche:'È l’unico video del piano che dà allo spettatore un’esperienza gratuita e immediata da fare col telefono. Test D applicato alla radio: non «guarda che bello il mio hobby» ma «provalo tu adesso».',
+ nota:'Il video con la CTA più forte del piano.'},
+{id:'007',week:3,day:'mar',format:'F1',est:15,key:0,
+ hook:'Odio cercare le regole nel manuale mentre stiamo giocando. Quindi ho smesso.',
+ cosa:'Il regolamento interattivo di Arena Extinctio. Il finale è la parte importante: funziona con qualunque gioco tu abbia in casa, basta il pdf del manuale.',
+ perche:'Senza quel finale è una vetrina personale; con quel finale è uno strumento utile a chiunque abbia uno scaffale di giochi da tavolo. È il finale che fa salvare il video.',
+ nota:'L’app per uso personale è una cosa, ridistribuire manuali altrui è un’altra. Resta sul «fattelo per te».'},
+{id:'008',week:3,day:'gio',format:'F5',est:5,key:0,
+ hook:'Sto imparando un gioco di carte e sono già in difficoltà.',
+ cosa:'Riftbound. Una clip sola, testo sopra.',
+ perche:'Ti mostri principiante, che è l’opposto esatto dell’esperto che vende corsi. Prepara anche il 023.'},
+{id:'009',week:3,day:'sab',format:'F6',est:20,key:0,
+ hook:'Le mie app stanno online gratis. Per sempre. Senza un server.',
+ cosa:'GitHub Pages spiegato in un minuto.',
+ perche:'Primo educativo del piano, e arriva alla settimana tre non prima — deve sembrare la risposta a una curiosità, non un tutorial piazzato lì.'},
+{id:'010',week:4,day:'mar',format:'F1',est:10,key:0,
+ hook:"Io ed Erika ci siamo fatti un'app. Per le birre.",
+ cosa:'Diario del Luppolo.',
+ perche:'Leggerissimo, umano, e dimostra che il metodo funziona anche per cose piccole e stupide — il che lo rende molto più contagioso di un case study serio.'},
+{id:'011',week:4,day:'gio',format:'F4',est:10,key:0,
+ hook:'Non ho toccato niente. Ieri funzionava. Oggi no.',
+ cosa:'La carrellata dei problemi tecnici che si creano da soli. Chiusura: «alla fine risolvo sempre, in un porco o nell’altro».',
+ perche:'Universale, autoironico, e fa entrare TheMACSrPOO dalla porta di servizio invece che con un video «ecco la mia musica» — che nessuno guarderebbe se non ti conosce. La musica si fa ascoltare, non presentare.',
+ nota:'Audio: il pezzo dall’album «Problemi Tecnici», con didascalia a schermo per due secondi.'},
+{id:'012',week:4,day:'sab',format:'F2',est:10,key:0,
+ hook:"Con la potenza di una lampadina ho parlato con l'altra parte del mondo.",
+ cosa:'FT8. Lo schermo di WSJT-X che scorre è già ipnotico di suo: imposti tutto, premi via, e guardi il mondo rispondere da solo.',
+ perche:'È qui che la lampadina è vera — FT8 si fa a bassa potenza. (Sulla fonia usi 80W, non è QRP.)'},
+{id:'013',week:5,day:'mar',format:'F1',est:15,key:0,
+ hook:'Ho centinaia di clip sparse su tre dispositivi. Ecco come le ritrovo in tre secondi.',
+ cosa:'Il logbook companion di Linked Landscapes.',
+ perche:'Parla a creator, videomaker e a chi lavora per loro. È il primo video che ti porta pubblico professionale, cioè gente con un budget.'},
+{id:'014',week:5,day:'gio',format:'F3',est:5,key:0,
+ hook:'Ditemi voi la cosa più inutile che devo costruire. La costruisco.',
+ cosa:'Video-innesco. Chiedi ai commenti.',
+ perche:'Costa cinque minuti, genera commenti (che è quello che l’algoritmo premia) e ti prepara il 018 senza doverlo inventare. La distanza di otto giorni è voluta: ai commenti serve tempo per accumularsi.'},
+{id:'015',week:5,day:'sab',format:'F5',est:10,key:0,
+ hook:'Questa stanza è metà studio, metà stazione radio, metà disastro.',
+ cosa:'Tour del tuo spazio.',
+ perche:'I video di setup funzionano sempre e costano niente. Qui fanno un lavoro in più: mostrano fisicamente che le tue tre vite stanno tutte nello stesso metro quadro.'},
+{id:'016',week:6,day:'mar',format:'F2',est:10,key:0,
+ hook:'Sono riuscito a parlare con un tipo in Inghilterra grazie a una canna da pesca sul terrazzo.',
+ cosa:'L’antenna improvvisata. Mostri la canna sul terrazzo.',
+ perche:'Il gancio è l’improvvisazione, non la potenza — una canna da pesca è molto più «reparto sperimentale» di un dato in watt. Ha una persona vera dall’altra parte e zero gergo.'},
+{id:'017',week:6,day:'gio',format:'F6',est:20,key:0,
+ hook:'La mia app non ha nessun server. E allora dove finiscono i miei dati?',
+ cosa:'Un video solo, in due tempi. Prima localStorage: i dati stanno nel browser. Poi la domanda naturale che segue — «e se li voglio ritrovare su un altro dispositivo?» — e lì entra il token Gist.',
+ perche:'Due argomenti diventano un video solo se il secondo è la domanda che nasce dal primo.'},
+{id:'018',week:6,day:'sab',format:'F3',est:15,key:0,
+ hook:"Me l'avete chiesto voi. Purtroppo.",
+ cosa:'Costruisci la cosa più assurda uscita dai commenti del 014.',
+ perche:'Primo video in cui il pubblico entra nel reparto. Da qui in poi ti chiederanno cose in continuazione, cioè avrai idee gratis per mesi.'},
+{id:'019',week:7,day:'mar',format:'F1',est:15,key:0,
+ hook:'Faccio il coach di podcast. Il gestionale me lo sono scritto da solo.',
+ cosa:'Podcast Companion / NIKA. Nessuna offerta, nessun link — solo il fatto.',
+ perche:'È il video che trasforma «quel tizio simpatico» in «uno che lavora». Il pubblico scopre che hai un mestiere vero e dei clienti veri.'},
+{id:'020',week:7,day:'gio',format:'F4',est:10,key:0,
+ hook:"L'AI mi ha distrutto mezza app. E la colpa era mia.",
+ cosa:'Cosa è andato storto e perché era colpa del prompt, non dello strumento. Audio: la tua musica.',
+ perche:'È il video anti-hype per eccellenza, quello che ti separa nettamente dai «costruisci il tuo business con l’AI».',
+ nota:'Audio: TheMACSrPOO.'},
+{id:'021',week:7,day:'sab',format:'F5',est:10,key:0,
+ hook:'Sto imparando a fare videogiochi. Guarda che roba orrenda.',
+ cosa:'Godot, il primo prototipo brutto.',
+ perche:'Mostrarti principiante dopo sei settimane da esperto è la mossa che tiene il pubblico dalla tua parte.'},
+{id:'022',week:8,day:'mar',format:'F1',est:15,key:0,
+ hook:"Un amico mi ha detto «mi servirebbe una cosa». Gliel'ho fatta in un pomeriggio.",
+ cosa:'Il primo esperimento fatto per qualcun altro.',
+ perche:'Non è pubblicità del servizio, è la dimostrazione che il metodo funziona anche fuori dalla tua testa. Chi deve capire capisce da solo — ed è il video che ti porterà le prime richieste in DM.'},
+{id:'023',week:8,day:'gio',format:'F3',est:15,key:0,
+ hook:"Ho fatto un'app per un gioco di carte che non so ancora giocare.",
+ cosa:'Riftbound.',
+ perche:'Chiude il cerchio col 008 di cinque settimane prima. Il pubblico vede una progressione, ed è la prima volta che il profilo racconta una storia e non solo dei pezzi.'},
+{id:'024',week:8,day:'sab',format:'F6',est:20,key:1,
+ hook:'Ho aperto al pubblico le app che mi sono fatto.',
+ cosa:'L’ARCHIVIO DEL REPARTO — 5 o 6 app pubbliche e usabili gratis da chiunque, in una pagina sola. L’email serve solo per essere avvisati quando ne aggiungi una.',
+ perche:'Non regali il metodo, regali il risultato. Chi le usa e pensa «però a me servirebbe leggermente diversa» ha appena capito da solo la tua tesi — e quello è il pensiero da cui nasce sia un cliente che un allievo.',
+ nota:'L’unico momento che assomiglia a un’offerta.'}
+];
+
+/* ---------------- STORAGE ---------------- */
+function blankState(){return{s:0,dates:[null,null,null,null],note:'',link:'',eff:null,p:{tt:false,ig:false,yt:false}}}
+function freshDB(){return{v:1,seedVersion:0,videos:[],st:{},howto:[],queue:[],ideas:[],ui:{closed:[]}}}
+
+let DB=freshDB();
+
+function load(){
+  try{const raw=localStorage.getItem(LSKEY); if(raw) DB=Object.assign(freshDB(),JSON.parse(raw));}
+  catch(e){console.warn('storage illeggibile',e); DB=freshDB();}
+  if(!Array.isArray(DB.videos)) DB.videos=[];
+  if(!DB.st||typeof DB.st!=='object') DB.st={};
+  if(!Array.isArray(DB.howto)) DB.howto=[];
+  if(!Array.isArray(DB.queue)) DB.queue=[];
+  if(!Array.isArray(DB.ideas)) DB.ideas=[];
+  if(!DB.ui) DB.ui={closed:[]};
+  if(!Array.isArray(DB.ui.dropped)) DB.ui.dropped=[];
+  mergeSeed();
+}
+/* Aggiunge i video del piano che mancano, senza toccare quelli già presenti
+   (così il seed può crescere in futuro e le tue modifiche non si perdono). */
+const SEEDIDS=new Set(SEED.map(s=>s.id));
+function dropSeed(id){ if(SEEDIDS.has(id)) DB.ui.dropped=[...new Set([...(DB.ui.dropped||[]),id])]; }
+function mergeSeed(force){
+  const have=new Set(DB.videos.map(v=>v.id));
+  const skip=new Set(force?[]:(DB.ui.dropped||[]));
+  if(force) DB.ui.dropped=[];
+  let added=0;
+  SEED.forEach(s=>{ if(!have.has(s.id)&&!skip.has(s.id)){ DB.videos.push(Object.assign({custom:false,nota:''},s)); added++; } });
+  DB.seedVersion=SEED_VERSION;
+  DB.videos.forEach(v=>{ if(!DB.st[v.id]) DB.st[v.id]=blankState(); });
+  if(added||force) save();
+  return added;
+}
+let saveT=null;
+function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{localStorage.setItem(LSKEY,JSON.stringify(DB));}catch(e){toast('Storage pieno o bloccato');} },60); }
+function saveNow(){ clearTimeout(saveT); try{localStorage.setItem(LSKEY,JSON.stringify(DB));}catch(e){} }
+
+/* ---------------- UTIL ---------------- */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+function dshort(iso){ if(!iso) return ''; const d=new Date(iso); return pad(d.getDate())+'/'+pad(d.getMonth()+1); }
+function dfull(iso){ if(!iso) return '—'; const d=new Date(iso); return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()+' '+pad(d.getHours())+':'+pad(d.getMinutes()); }
+let toastT=null;
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+const st=id=>(DB.st[id]||(DB.st[id]=blankState()));
+const vid=id=>DB.videos.find(v=>v.id===id);
+function sortedVideos(){ return [...DB.videos].sort((a,b)=> a.week-b.week || String(a.id).localeCompare(String(b.id))); }
+function weekList(){ const s=new Set(DB.videos.map(v=>+v.week)); Object.keys(WEEKS).forEach(w=>s.add(+w)); return [...s].sort((a,b)=>a-b); }
+function fcolor(f){ return FORMATS[f]?('var('+FORMATS[f].c+')'):'var(--tx3)'; }
+
+/* ---------------- FILTRI ---------------- */
+const F={stato:'',format:'',week:''};
+function buildFilters(){
+  const fs=$('#f-stato'); STATI.forEach((s,i)=>fs.insertAdjacentHTML('beforeend','<option value="'+i+'">'+s.toLowerCase()+'</option>'));
+  const ff=$('#f-format'); Object.keys(FORMATS).forEach(k=>ff.insertAdjacentHTML('beforeend','<option value="'+k+'">'+k+'</option>'));
+  const fw=$('#f-week'); weekList().forEach(w=>fw.insertAdjacentHTML('beforeend','<option value="'+w+'">sett. '+w+'</option>'));
+  fs.onchange=()=>{F.stato=fs.value;renderPlan()};
+  ff.onchange=()=>{F.format=ff.value;renderPlan()};
+  fw.onchange=()=>{F.week=fw.value;renderPlan()};
+  $('#f-clear').onclick=()=>{F.stato=F.format=F.week='';fs.value=ff.value=fw.value='';renderPlan()};
+}
+function pass(v){
+  if(F.format&&v.format!==F.format) return false;
+  if(F.week&&+v.week!==+F.week) return false;
+  if(F.stato!==''&&st(v.id).s!==+F.stato) return false;
+  return true;
+}
+
+/* ---------------- RENDER PIANO ---------------- */
+function cardHTML(v){
+  const s=st(v.id), col=fcolor(v.format);
+  const pl=s.p||{};
+  const eff=(s.eff!=null&&s.eff!=='')?s.eff+"'":'—';
+  return '<div class="card" data-id="'+v.id+'">'
+   +'<span class="fbar" style="background:'+col+'"></span>'
+   +'<div class="cmain" data-open="'+v.id+'">'
+     +'<div class="crow1">'
+       +'<span class="cid">'+esc(v.id)+'</span>'
+       +'<span class="tag" style="color:'+col+';border-color:'+col+'33;background:'+col+'14">'+esc(v.format)+'</span>'
+       +'<span class="day">'+esc(v.day||'')+'</span>'
+       +(v.key?'<span class="star">★</span>':'')
+       +(v.custom?'<span class="day" style="color:var(--f2)">·mio</span>':'')
+     +'</div>'
+     +'<div class="hook">'+esc(v.hook||'(senza hook)')+'</div>'
+     +'<div class="cfoot"><span>'+eff+' / '+(v.est||0)+"'</span>"
+       +'<span class="plat">'
+         +'<span class="'+(pl.tt?'on':'')+'">TT</span>'
+         +'<span class="'+(pl.ig?'on':'')+'">IG</span>'
+         +'<span class="'+(pl.yt?'on':'')+'">YT</span>'
+       +'</span>'
+       +(s.dates[1]?'<span title="data di registrazione">\u25cf GIR '+dshort(s.dates[1])+'</span>':'')
+     +'</div>'
+   +'</div>'
+   +'<button class="stbtn '+STCLS[s.s]+'" data-adv="'+v.id+'">'+STATI[s.s]+(s.s<3?'<small>tap → '+STATI[s.s+1].toLowerCase()+'</small>':'<small>fatto</small>')+'</button>'
+  +'</div>';
+}
+function renderPlan(){
+  const box=$('#weeks'); const closed=new Set(DB.ui.closed||[]);
+  let html='', any=false;
+  weekList().forEach(w=>{
+    const all=sortedVideos().filter(v=>+v.week===w);
+    const vs=all.filter(pass);
+    if(!vs.length) return;
+    any=true;
+    const pub=all.filter(v=>st(v.id).s===3).length;
+    const complete=all.length>0&&pub===all.length;
+    html+='<div class="week'+(closed.has(w)?' closed':'')+'" data-w="'+w+'">'
+      +'<div class="whead" data-toggle="'+w+'">'
+        +'<span class="wnum'+(complete?' done':'')+'">W'+w+'</span>'
+        +'<span class="wtitle">'+esc(WEEKS[w]||'SETTIMANA '+w)+'</span>'
+        +'<span class="wcount">'+pub+'/'+all.length+'</span>'
+        +'<span class="wcaret">▼</span>'
+      +'</div><div class="wbody">'+vs.map(cardHTML).join('')+'</div></div>';
+  });
+  box.innerHTML=html||'<div class="empty">nessun video con questi filtri</div>';
+  renderHeader();
+}
+function renderHeader(){
+  const tot=DB.videos.length, pub=DB.videos.filter(v=>st(v.id).s===3).length;
+  const pct=tot?Math.round(pub/tot*100):0;
+  $('#progbar').style.width=pct+'%';
+  $('#proglab').textContent=pub+'/'+tot+' PUBBLICATI · '+pct+'%';
+  const s=streak();
+  $('#streaklab').textContent='STREAK '+s.cur+'W';
+  const d=new Date();
+  $('#hmeta').innerHTML=pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()+'<br>'+tot+' video in piano';
+  $('#bdg-q').textContent=DB.queue.length;
+  $('#bdg-i').textContent=DB.ideas.length;
+}
+
+/* ---------------- STATI ---------------- */
+function advance(id){
+  const s=st(id);
+  s.s=Math.min(3,s.s+1);
+  s.dates[s.s]=new Date().toISOString();
+  let extra='';
+  if(s.s===2&&qAdd(id,true)) extra=' · in coda';   // montato → entra in coda d'uscita
+  if(s.s===3&&qDrop(id))     extra=' · fuori dalla coda';
+  save(); renderPlan(); renderTime(); renderQueue();
+  if(document.getElementById('ov-video').classList.contains('on')) openVideo(id);
+  toast(id+' → '+STATI[s.s]+extra);
+}
+function setStep(id,i){
+  const s=st(id); s.s=i;
+  if(i>0&&!s.dates[i]) s.dates[i]=new Date().toISOString();
+  if(i===0) s.dates=[null,null,null,null];
+  save(); renderPlan(); renderTime(); openVideo(id);
+}
+
+/* ---------------- DETTAGLIO ---------------- */
+let curId=null;
+function openVideo(id){
+  const v=vid(id); if(!v) return;
+  curId=id; const s=st(id), col=fcolor(v.format);
+  $('#dv-id').textContent=v.id;
+  const tag=$('#dv-tag'); tag.textContent=v.format;
+  tag.style.color=col; tag.style.borderColor=col+'33'; tag.style.background=col+'14';
+  $('#dv-day').textContent='W'+v.week+' · '+(v.day||'—')+(v.key?' · ★':'');
+  const pl=s.p||{};
+  $('#dv-body').innerHTML=
+    '<div class="steps">'+STATI.map((t,i)=>'<button data-step="'+i+'" class="'+(i<=s.s?'done':'')+(i===s.s?' cur':'')+'">'+t+(s.dates[i]?'<br><span style="opacity:.7">'+dshort(s.dates[i])+'</span>':'')+'</button>').join('')+'</div>'
+   +'<div class="fld"><div class="k">Data di registrazione</div>'
+     +'<input type="date" id="dv-shot" value="'+(s.dates[1]?s.dates[1].slice(0,10):'')+'" max="2099-12-31">'
+     +'<div class="hint">È la data che ti serve per ritrovare la clip nella galleria del telefono. Di default è il giorno in cui hai segnato GIRATO, ma correggila pure: se giri di domenica e apri l\u2019app il martedì, qui va la domenica.</div></div>'
+   +'<div class="fld"><div class="k">Format</div><div class="v"><span style="color:'+col+'">'+v.format+'</span> · '+esc(FORMATS[v.format]?FORMATS[v.format].n:'—')+'</div></div>'
+   +'<div class="fld"><div class="k">Hook</div><div class="v q">'+esc(v.hook)+'</div></div>'
+   +'<div class="fld"><div class="k">Cosa</div><div class="v">'+esc(v.cosa)+'</div></div>'
+   +'<div class="fld"><div class="k">Perché</div><div class="v">'+esc(v.perche)+'</div></div>'
+   +(v.nota?'<div class="fld"><div class="k">Nota di piano</div><div class="v" style="color:var(--f1)">'+esc(v.nota)+'</div></div>':'')
+   +'<div class="fld"><div class="k">Pubblicato su</div><div class="pchk">'
+     +'<label class="'+(pl.tt?'on':'')+'"><input type="checkbox" data-p="tt" '+(pl.tt?'checked':'')+'>TIKTOK</label>'
+     +'<label class="'+(pl.ig?'on':'')+'"><input type="checkbox" data-p="ig" '+(pl.ig?'checked':'')+'>REELS</label>'
+     +'<label class="'+(pl.yt?'on':'')+'"><input type="checkbox" data-p="yt" '+(pl.yt?'checked':'')+'>SHORTS</label>'
+   +'</div></div>'
+   +'<label class="fl">Minuti di montaggio effettivi · stima '+(v.est||0)+"'</label>"
+   +'<input type="number" id="dv-eff" min="0" step="1" value="'+(s.eff==null?'':s.eff)+'" placeholder="'+(v.est||0)+'">'
+   +'<label class="fl">Link al video pubblicato</label>'
+   +'<input type="url" id="dv-link" value="'+esc(s.link||'')+'" placeholder="https://…">'
+   +(s.link?'<div class="hint"><a href="'+esc(s.link)+'" target="_blank" rel="noopener" style="color:var(--f2)">apri il video ↗</a></div>':'')
+   +'<label class="fl">Note mie</label>'
+   +'<textarea id="dv-note" placeholder="idee, correzioni, cosa non ha funzionato…">'+esc(s.note||'')+'</textarea>'
+   +'<button class="btn w" id="dv-edit" style="margin-top:16px">MODIFICA I CAMPI DI PIANO</button>';
+
+  $$('#dv-body [data-step]').forEach(b=>b.onclick=()=>setStep(id,+b.dataset.step));
+  $$('#dv-body [data-p]').forEach(cb=>cb.onchange=()=>{
+    s.p[cb.dataset.p]=cb.checked; cb.parentNode.classList.toggle('on',cb.checked); save(); renderPlan();
+  });
+  $('#dv-shot').onchange=e=>{
+    const val=e.target.value;
+    if(val){
+      s.dates[1]=new Date(val+'T12:00:00').toISOString();
+      if(s.s<1){ s.s=1; toast(id+' → GIRATO'); }
+    } else if(s.s<2){ s.dates[1]=null; }
+    save(); renderPlan(); renderQueue(); renderTime(); openVideo(id);
+  };
+  $('#dv-eff').oninput=e=>{ const x=e.target.value; s.eff=(x===''?null:Math.max(0,+x)); save(); renderTime(); renderPlan(); };
+  $('#dv-link').oninput=e=>{ s.link=e.target.value.trim(); save(); };
+  $('#dv-note').oninput=e=>{ s.note=e.target.value; save(); };
+  $('#dv-edit').onclick=()=>{ closeOv('ov-video'); openEdit(id); };
+  openOv('ov-video');
+}
+
+/* ---------------- EDITOR ---------------- */
+let editId=null;
+function fillEditSelects(){
+  const w=$('#de-week'); w.innerHTML=''; weekList().forEach(x=>w.insertAdjacentHTML('beforeend','<option value="'+x+'">W'+x+' · '+(WEEKS[x]||'')+'</option>'));
+  const f=$('#de-format'); f.innerHTML=''; Object.keys(FORMATS).forEach(k=>f.insertAdjacentHTML('beforeend','<option value="'+k+'">'+k+' · '+esc(FORMATS[k].n)+'</option>'));
+  const g=$('#i-format'); if(g){ const cur=g.value; g.innerHTML='<option value="">format · da decidere</option>';
+    Object.keys(FORMATS).forEach(k=>g.insertAdjacentHTML('beforeend','<option value="'+k+'">'+k+' · '+esc(FORMATS[k].n.slice(0,20))+'</option>')); g.value=cur||''; }
+}
+function openEdit(id){
+  editId=id||null; const v=id?vid(id):null;
+  $('#de-title').textContent=v?('MODIFICA '+v.id):'NUOVO VIDEO';
+  $('#de-id').value=v?v.id:nextId();
+  $('#de-id').disabled=false;
+  $('#de-swaprow').hidden=!v;
+  if(v){
+    const sel=$('#de-swap');
+    sel.innerHTML='<option value="">— scegli il video —</option>'+
+      sortedVideos().filter(x=>x.id!==v.id)
+        .map(x=>'<option value="'+x.id+'">'+x.id+' · W'+x.week+' · '+x.format+' · '+esc((x.hook||'').slice(0,34))+'</option>').join('');
+  }
+  $('#de-week').value=v?v.week:1;
+  $('#de-day').value=v?(v.day||'—'):'mar';
+  $('#de-format').value=v?v.format:'F1';
+  $('#de-hook').value=v?(v.hook||''):'';
+  $('#de-cosa').value=v?(v.cosa||''):'';
+  $('#de-perche').value=v?(v.perche||''):'';
+  $('#de-est').value=v?(v.est||''):20;
+  $('#de-key').value=v&&v.key?'1':'0';
+  $('#de-nota').value=v?(v.nota||''):'';
+  $('#de-del').hidden=!v;
+  openOv('ov-edit');
+}
+/* Rinomina un video: id, stato, coda e “video del piano tolti” restano coerenti. */
+function renameVideo(a,b){
+  const v=vid(a); if(!v||a===b) return false;
+  v.id=b;
+  DB.st[b]=DB.st[a]||blankState(); delete DB.st[a];
+  DB.queue.forEach(q=>{ if(q.id===a) q.id=b; });
+  dropSeed(a);
+  return true;
+}
+/* Scambio di posto: due video si scambiano id, settimana e giorno.
+   Lo stato segue il contenuto, non il numero. */
+function swapVideos(a,b){
+  const A=vid(a), B=vid(b);
+  if(!A||!B||a===b) return false;
+  const sa=DB.st[a]||blankState(), sb=DB.st[b]||blankState();
+  const t={id:A.id,week:A.week,day:A.day};
+  A.id=B.id; A.week=B.week; A.day=B.day;
+  B.id=t.id; B.week=t.week; B.day=t.day;
+  DB.st[A.id]=sa; DB.st[B.id]=sb;
+  DB.queue.forEach(q=>{ if(q.id===a) q.id=b; else if(q.id===b) q.id=a; });
+  return true;
+}
+function nextId(){
+  let max=0; DB.videos.forEach(v=>{const n=parseInt(v.id,10); if(!isNaN(n)&&n>max) max=n;});
+  return String(max+1).padStart(3,'0');
+}
+function saveEdit(){
+  const id=($('#de-id').value.trim()||editId||nextId());
+  if(!/^[A-Za-z0-9._-]{1,10}$/.test(id)){ toast('ID non valido: max 10 caratteri, lettere e numeri'); return; }
+  const clash=vid(id);
+  if(clash&&clash.id!==editId){ toast('ID '+id+' già usato — usa «scambia di posto»'); return; }
+  let renamed='';
+  if(editId&&id!==editId){ renameVideo(editId,id); renamed=' (era '+editId+')'; editId=id; }
+  const data={
+    id:id, week:+$('#de-week').value, day:$('#de-day').value, format:$('#de-format').value,
+    hook:$('#de-hook').value.trim(), cosa:$('#de-cosa').value.trim(), perche:$('#de-perche').value.trim(),
+    est:+($('#de-est').value||0), key:+$('#de-key').value, nota:$('#de-nota').value.trim()
+  };
+  const ex=vid(id);
+  if(ex) Object.assign(ex,data); else DB.videos.push(Object.assign({custom:true},data));
+  if(!DB.st[id]) DB.st[id]=blankState();
+  let msg=id+' salvato'+renamed;
+  if(pendingIdea){                       // l'idea è diventata un video: esce dal contenitore
+    DB.ideas=DB.ideas.filter(x=>x.i!==pendingIdea);
+    DB.ui.ideasUsed=(DB.ui.ideasUsed||0)+1;
+    pendingIdea=null; msg=id+' salvato · idea archiviata';
+  }
+  saveNow(); closeOv('ov-edit'); renderPlan(); renderQueue(); renderIdeas(); renderTime(); toast(msg);
+}
+function delVideo(){
+  if(!editId) return;
+  const v=vid(editId);
+  if(!confirm('Eliminare '+editId+'? Se è un video del piano lo recuperi con «Ricarica video mancanti» in DATI.')) return;
+  DB.videos=DB.videos.filter(x=>x.id!==editId); delete DB.st[editId]; qDrop(editId); dropSeed(editId);
+  saveNow(); closeOv('ov-edit'); renderPlan(); renderQueue(); renderTime(); toast(editId+' eliminato');
+}
+
+/* ---------------- TEMPO + STREAK ---------------- */
+function streak(){
+  const ws=weekList();
+  const complete=w=>{const a=DB.videos.filter(v=>+v.week===w); return a.length>0&&a.every(v=>st(v.id).s===3)};
+  const started=w=>DB.videos.filter(v=>+v.week===w).some(v=>st(v.id).s>0);
+  let best=0,run=0;
+  ws.forEach(w=>{ if(complete(w)){run++; if(run>best)best=run;} else run=0; });
+  let last=-1; ws.forEach((w,i)=>{ if(complete(w)||started(w)) last=i; });
+  let cur=0;
+  for(let i=last;i>=0;i--){ if(complete(ws[i])) cur++; else break; }
+  return {cur:cur,best:best};
+}
+function renderTime(){
+  const meas=DB.videos.filter(v=>{const e=st(v.id).eff; return e!=null&&e!==''});
+  const eff=meas.reduce((a,v)=>a+(+st(v.id).eff||0),0);
+  const est=meas.reduce((a,v)=>a+(+v.est||0),0);
+  $('#t-eff').innerHTML=eff+'<span style="font-size:15px;color:var(--tx3)">\'</span>';
+  $('#t-est').innerHTML=est+'<span style="font-size:15px;color:var(--tx3)">\'</span>';
+  $('#t-n').textContent=meas.length;
+  const over=meas.filter(v=>+st(v.id).eff>20).length;
+  $('#t-over').textContent=over;
+  $('#t-over').style.color=over?'var(--bad)':'var(--ok)';
+  const avg=meas.length?Math.round(eff/meas.length):null;
+  $('#t-avg').textContent=avg==null?'—':avg+"'";
+  if(avg!=null) $('#t-avg').style.color=avg>20?'var(--bad)':'var(--ok)';
+  let vd;
+  if(!meas.length) vd='Segna i minuti effettivi nel dettaglio di un video per iniziare a misurare.';
+  else if(avg<=20) vd='Media '+avg+"' — regola dei 20 minuti rispettata"+(over?(', ma '+over+' video l’hanno sforata.'):'.');
+  else vd='Media '+avg+"' — sei sopra la regola dei 20 minuti. "+(eff>est?('Anche sopra la tua stima di '+(eff-est)+"'."):'');
+  $('#t-verdict').textContent=vd;
+
+  let rows='';
+  Object.keys(FORMATS).forEach(k=>{
+    const vs=DB.videos.filter(v=>v.format===k);
+    if(!vs.length) return;
+    const p=vs.filter(v=>st(v.id).s===3).length;
+    const m=vs.filter(v=>{const e=st(v.id).eff;return e!=null&&e!==''});
+    const av=m.length?Math.round(m.reduce((a,v)=>a+(+st(v.id).eff||0),0)/m.length):null;
+    const pct=Math.round(p/vs.length*100);
+    rows+='<div style="margin-bottom:9px"><div style="display:flex;gap:8px;align-items:baseline;font-family:var(--mono);font-size:11px">'
+      +'<span style="color:'+fcolor(k)+';font-weight:700">'+k+'</span>'
+      +'<span style="color:var(--tx3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(FORMATS[k].n)+'</span>'
+      +'<span style="color:var(--tx2)">'+p+'/'+vs.length+'</span>'
+      +'<span style="color:var(--tx3);width:34px;text-align:right">'+(av==null?'—':av+"'")+'</span></div>'
+      +'<div class="bar" style="margin-top:4px"><i style="width:'+pct+'%;background:'+fcolor(k)+'"></i></div></div>';
+  });
+  $('#t-formats').innerHTML=rows||'<div class="empty">—</div>';
+  const s=streak(); $('#t-streak').textContent=s.cur; $('#t-best').textContent=s.best;
+  $('#t-streak').style.color=s.cur?'var(--ok)':'var(--tx2)';
+}
+
+/* ---------------- KPI "COME SI FA?" ---------------- */
+function renderKPI(){
+  const now=Date.now();
+  const n7=DB.howto.filter(h=>now-new Date(h.t).getTime()<7*864e5).length;
+  const n30=DB.howto.filter(h=>now-new Date(h.t).getTime()<30*864e5).length;
+  $('#k-tot').textContent=DB.howto.length;
+  $('#k-7').textContent=n7; $('#k-30').textContent=n30;
+  const list=[...DB.howto].sort((a,b)=>new Date(b.t)-new Date(a.t));
+  $('#k-hist').innerHTML=list.length
+    ? '<div class="hist">'+list.map((h,i)=>'<div class="hitem"><span class="d">'+dfull(h.t)+'</span><span class="n">'+esc(h.n||'—')+'</span><button class="rm" data-h="'+h.t+'">✕</button></div>').join('')+'</div>'
+    : '<div class="empty">ancora nessuno te l’ha chiesto</div>';
+  $$('#k-hist [data-h]').forEach(b=>b.onclick=()=>{ DB.howto=DB.howto.filter(h=>h.t!==b.dataset.h); saveNow(); renderKPI(); });
+}
+
+/* ---------------- CODA DI USCITA ---------------- */
+function uid(p){ return p+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36); }
+function inQueue(id){ return DB.queue.some(q=>q.id===id); }
+function qAdd(id,silent){
+  if(!id||inQueue(id)) return false;
+  DB.queue.push({q:uid('q'),id:id});
+  if(!silent){ saveNow(); renderQueue(); }
+  return true;
+}
+function qDrop(id){
+  const n=DB.queue.length;
+  DB.queue=DB.queue.filter(q=>q.id!==id);
+  return DB.queue.length!==n;
+}
+function qMove(key,dir){
+  const i=DB.queue.findIndex(q=>q.q===key), j=i+dir;
+  if(i<0||j<0||j>=DB.queue.length) return;
+  const [x]=DB.queue.splice(i,1); DB.queue.splice(j,0,x);
+  saveNow(); renderQueue();
+}
+/* prossimo slot di pubblicazione: mar / gio / sab */
+function nextSlot(){
+  const D=['dom','lun','mar','mer','gio','ven','sab'], ok=[2,4,6];
+  const d=new Date(); d.setHours(0,0,0,0);
+  for(let k=0;k<8;k++){
+    const x=new Date(d.getTime()+k*864e5);
+    if(ok.includes(x.getDay())) return D[x.getDay()]+' '+pad(x.getDate())+'/'+pad(x.getMonth()+1);
+  }
+  return '—';
+}
+function lastSession(){
+  const ds=DB.videos.map(v=>st(v.id).dates[1]).filter(Boolean).sort();
+  if(!ds.length) return 'Nessuna sessione di registrazione ancora segnata.';
+  const last=ds[ds.length-1], day=last.slice(0,10);
+  const n=ds.filter(x=>x.slice(0,10)===day).length;
+  return 'Ultima sessione di registrazione: '+dshort(last)+' · '+n+(n===1?' video girato':' video girati')+' quel giorno.';
+}
+function fillQPick(){
+  const sel=$('#q-pick');
+  const opts=sortedVideos().filter(v=>st(v.id).s<3&&!inQueue(v.id));
+  sel.innerHTML=opts.length
+    ? '<option value="">— scegli un video —</option>'+opts.map(v=>'<option value="'+v.id+'">'+v.id+' · '+v.format+' · '+esc((v.hook||'').slice(0,44))+'</option>').join('')
+    : '<option value="">— nessun video disponibile —</option>';
+}
+function renderQueue(){
+  $('#q-n').textContent=DB.queue.length;
+  const first=DB.queue[0];
+  $('#q-next').textContent=first?(first.id||'—'):'—';
+  $('#q-slot').textContent=nextSlot();
+  $('#q-session').textContent=lastSession();
+  fillQPick();
+  const box=$('#q-list');
+  if(!DB.queue.length){ box.innerHTML='<div class="empty">coda vuota · un video ci entra da solo quando lo segni MONTATO</div>'; renderHeader(); return; }
+  box.innerHTML=DB.queue.map((q,i)=>{
+    const v=q.id?vid(q.id):null;
+    const col=v?fcolor(v.format):'var(--tx3)';
+    const s=v?st(v.id):null;
+    return '<div class="qitem'+(i===0?' qnext':'')+'" data-q="'+q.q+'">'
+      +'<span class="qn">'+(i+1)+'</span>'
+      +'<span class="qgrip">⠿</span>'
+      +'<div class="qbody">'
+        +'<div class="qt"><span class="mono" style="color:'+col+';font-weight:700">'+esc(q.id||'—')+'</span> '+esc(v?(v.hook||''):(q.t||''))+'</div>'
+        +'<div class="qm">'+(v?'<span style="color:'+col+'">'+v.format+'</span> · W'+v.week+(s&&s.dates[1]?' · \u25cf GIR '+dshort(s.dates[1]):'')+'</div>':'</div>')
+      +'</div>'
+      +'<div class="qarrow"><button data-up="'+q.q+'">▲</button><button data-down="'+q.q+'">▼</button></div>'
+      +'<div class="qacts"><button data-qpub="'+q.q+'" title="pubblicato">✓</button><button data-qdel="'+q.q+'" title="togli">✕</button></div>'
+    +'</div>';
+  }).join('');
+  renderHeader();
+}
+/* drag & drop: dalla maniglia ⠿ subito, oppure tenendo premuto la voce */
+let QD=null;
+function qDown(e){
+  const it=e.target.closest('.qitem'); if(!it||e.target.closest('button')) return;
+  const grip=!!e.target.closest('.qgrip');
+  const r=it.getBoundingClientRect();
+  QD={it:it,h:r.height,w:r.width,left:r.left,offY:e.clientY-r.top,y:e.clientY,y0:e.clientY,active:false,t:null};
+  QD.t=setTimeout(qBegin,grip?0:230);
+  document.addEventListener('pointermove',qMoveEv,{passive:false});
+  document.addEventListener('pointerup',qUp);
+  document.addEventListener('pointercancel',qUp);
+}
+function qBegin(){
+  if(!QD) return;
+  QD.active=true;
+  const it=QD.it;
+  const ph=document.createElement('div'); ph.className='qph'; ph.style.height=QD.h+'px';
+  it.parentNode.insertBefore(ph,it); QD.ph=ph;
+  it.style.width=QD.w+'px'; it.style.height=QD.h+'px'; it.style.left=QD.left+'px';
+  it.classList.add('drag'); qPos();
+  try{ if(navigator.vibrate) navigator.vibrate(12); }catch(e){}
+}
+function qPos(){ QD.it.style.top=(QD.y-QD.offY)+'px'; }
+function qMoveEv(e){
+  if(!QD) return;
+  if(!QD.active){ if(Math.abs(e.clientY-QD.y0)>9){ clearTimeout(QD.t); qUp(); } return; }
+  e.preventDefault();
+  QD.y=e.clientY; qPos();
+  const list=$('#q-list');
+  const others=[...list.children].filter(n=>n!==QD.it&&n!==QD.ph);
+  let target=null;
+  for(const n of others){ const r=n.getBoundingClientRect(); if(e.clientY<r.top+r.height/2){ target=n; break; } }
+  list.insertBefore(QD.ph,target);
+}
+function qUp(){
+  document.removeEventListener('pointermove',qMoveEv);
+  document.removeEventListener('pointerup',qUp);
+  document.removeEventListener('pointercancel',qUp);
+  if(!QD) return;
+  clearTimeout(QD.t);
+  if(QD.active){
+    const it=QD.it, list=$('#q-list');
+    QD.ph.parentNode.insertBefore(it,QD.ph); QD.ph.remove();
+    it.classList.remove('drag'); it.style.width=it.style.height=it.style.left=it.style.top='';
+    const order=[...list.children].map(n=>n.dataset.q);
+    DB.queue.sort((a,b)=>order.indexOf(a.q)-order.indexOf(b.q));
+    saveNow(); renderQueue();
+  }
+  QD=null;
+}
+
+/* ---------------- IDEE ---------------- */
+let ideaEditing=null;
+function renderIdeas(){
+  const q=($('#i-search').value||'').toLowerCase().trim();
+  const list=[...DB.ideas].sort((a,b)=>new Date(b.ts)-new Date(a.ts))
+    .filter(x=>!q||((x.t||'')+' '+(x.n||'')).toLowerCase().includes(q));
+  $('#i-n').textContent=DB.ideas.length;
+  $('#i-used').textContent=DB.ui.ideasUsed||0;
+  $('#i-list').innerHTML=list.length? list.map(x=>{
+    const col=x.f?fcolor(x.f):'var(--tx3)';
+    return '<div class="idea" data-i="'+x.i+'"><div class="irow"><div class="it">'+esc(x.t)+'</div>'
+     +'<div class="iacts">'
+       +'<button data-ipro="'+x.i+'" title="diventa un video del piano">⇄</button>'
+       +'<button data-ied="'+x.i+'" title="modifica">✎</button>'
+       +'<button data-idel="'+x.i+'" title="elimina">✕</button>'
+     +'</div></div>'
+     +(x.n?'<div class="in">'+esc(x.n)+'</div>':'')
+     +'<div class="im">'+(x.f?'<span style="color:'+col+'">'+x.f+'</span> · ':'')+dshort(x.ts)+'</div></div>';
+  }).join('') : '<div class="empty">'+(q?'nessuna idea trovata':'nessuna idea ancora')+'</div>';
+  renderHeader();
+}
+function ideaSave(){
+  const t=$('#i-title').value.trim();
+  if(!t){ toast('serve almeno un titolo'); return; }
+  const n=$('#i-note').value.trim(), f=$('#i-format').value;
+  if(ideaEditing){
+    const x=DB.ideas.find(y=>y.i===ideaEditing);
+    if(x){ x.t=t; x.n=n; x.f=f; }
+    ideaEditing=null; $('#i-add').textContent='+ AGGIUNGI';
+  } else {
+    DB.ideas.push({i:uid('i'),t:t,n:n,f:f,ts:new Date().toISOString()});
+  }
+  $('#i-title').value=''; $('#i-note').value=''; $('#i-format').value='';
+  saveNow(); renderIdeas(); toast('idea salvata');
+}
+function ideaLoad(key){
+  const x=DB.ideas.find(y=>y.i===key); if(!x) return;
+  ideaEditing=key;
+  $('#i-title').value=x.t; $('#i-note').value=x.n||''; $('#i-format').value=x.f||'';
+  $('#i-add').textContent='SALVA MODIFICA';
+  $('#i-title').focus(); window.scrollTo(0,0);
+}
+let pendingIdea=null;
+function ideaPromote(key){
+  const x=DB.ideas.find(y=>y.i===key); if(!x) return;
+  pendingIdea=key;
+  openEdit(null);
+  $('#de-hook').value=x.t;
+  $('#de-cosa').value=x.n||'';
+  if(x.f) $('#de-format').value=x.f;
+}
+
+/* ---------------- VIEW SWITCH ---------------- */
+function show(view){
+  $$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.view===view));
+  ['plan','queue','idee','time','kpi','set','guida'].forEach(v=>{ $('#v-'+v).hidden=(v!==view); });
+  $('#help-btn').classList.toggle('on',view==='guida');
+  if(view==='queue') renderQueue();
+  if(view==='idee') renderIdeas();
+  if(view==='time') renderTime();
+  if(view==='kpi') renderKPI();
+  if(view==='set') renderSet();
+  window.scrollTo(0,0);
+}
+function openOv(id){ $('#'+id).classList.add('on'); document.body.style.overflow='hidden'; }
+function closeOv(id){ $('#'+id).classList.remove('on'); document.body.style.overflow=''; if(id==='ov-edit') pendingIdea=null; }
+
+/* ---------------- EXPORT / IMPORT ---------------- */
+function exportJSON(){
+  saveNow();
+  const payload=JSON.stringify(DB,null,2);
+  const d=new Date();
+  const name=APP.toLowerCase()+'_'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'.json';
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([payload],{type:'application/json'}));
+  a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
+  toast('esportato '+name);
+}
+function importJSON(file){
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const o=JSON.parse(r.result);
+      if(!o||typeof o!=='object'||!Array.isArray(o.videos)) throw new Error('formato');
+      if(!confirm('Sostituire i dati attuali con quelli del file?')) return;
+      DB=Object.assign(freshDB(),o); mergeSeed(); saveNow(); redrawAll(); toast('importato');
+    }catch(e){ toast('file non valido'); }
+  };
+  r.readAsText(file);
+}
+
+/* ---------------- SYNC GITHUB GIST ---------------- */
+const GH={
+  get token(){ return localStorage.getItem(TKEY)||''; },
+  set token(v){ v?localStorage.setItem(TKEY,v):localStorage.removeItem(TKEY); },
+  get gist(){ return localStorage.getItem(GKEY)||''; },
+  set gist(v){ v?localStorage.setItem(GKEY,v):localStorage.removeItem(GKEY); }
+};
+function setSync(kind,text){
+  const dot=$('#s-dot'), lab=$('#s-lab');
+  const map={ok:['✓','var(--ok)'],err:['✗','var(--bad)'],busy:['⏳','var(--warn)'],off:['✗','var(--tx3)']};
+  const m=map[kind]||map.off;
+  dot.textContent=m[0]; dot.style.color=m[1]; lab.textContent=text;
+  const s=$('#s-state'); if(s) s.innerHTML='<b style="color:'+m[1]+'">'+m[0]+'</b> '+esc(text)
+    +'<br>File del Gist: <b class="mono">'+GIST_FILE+'</b>'
+    +(GH.gist?'<br>Gist ID: <span class="mono">'+esc(GH.gist)+'</span>':'');
+}
+async function ghFetch(url,opt){
+  const o=Object.assign({},opt||{});
+  o.headers=Object.assign({
+    'Authorization':'Bearer '+GH.token,
+    'Accept':'application/vnd.github+json',
+    'X-GitHub-Api-Version':'2022-11-28'
+  },o.headers||{});
+  const r=await fetch(url,o);
+  if(!r.ok){ let d=''; try{d=(await r.json()).message||'';}catch(e){}
+    throw new Error('HTTP '+r.status+(d?' · '+d:'')); }
+  return r.json();
+}
+async function ghLocate(){
+  if(GH.gist) return GH.gist;
+  const list=await ghFetch('https://api.github.com/gists?per_page=100');
+  const hit=list.find(g=>g.files&&g.files[GIST_FILE]);
+  if(hit){ GH.gist=hit.id; return hit.id; }
+  const made=await ghFetch('https://api.github.com/gists',{
+    method:'POST',
+    body:JSON.stringify({description:APP+' — piano editoriale (dati app)',public:false,
+      files:{[GIST_FILE]:{content:JSON.stringify(DB,null,2)}}})
+  });
+  GH.gist=made.id; return made.id;
+}
+async function ghPush(){
+  if(!GH.token){ setSync('off','nessun token: apri ⚙'); toast('Configura prima il token (⚙)'); return; }
+  try{
+    setSync('busy','push in corso…'); saveNow();
+    const id=await ghLocate();
+    await ghFetch('https://api.github.com/gists/'+id,{method:'PATCH',
+      body:JSON.stringify({files:{[GIST_FILE]:{content:JSON.stringify(DB,null,2)}}})});
+    setSync('ok','push ok · '+dfull(new Date().toISOString())); toast('dati inviati al Gist');
+  }catch(e){ setSync('err','push fallito · '+e.message); toast('push fallito: '+e.message); }
+}
+async function ghPull(){
+  if(!GH.token){ setSync('off','nessun token: apri ⚙'); toast('Configura prima il token (⚙)'); return; }
+  try{
+    setSync('busy','pull in corso…');
+    const id=await ghLocate();
+    const g=await ghFetch('https://api.github.com/gists/'+id);
+    const f=g.files&&g.files[GIST_FILE];
+    if(!f){ setSync('err','file '+GIST_FILE+' non trovato'); return; }
+    let content=f.content;
+    if(f.truncated||!content){ const r=await fetch(f.raw_url); content=await r.text(); }
+    const o=JSON.parse(content);
+    if(!o||!Array.isArray(o.videos)) throw new Error('contenuto non valido');
+    if(!confirm('Sovrascrivere i dati di questo dispositivo con quelli del Gist?')){ setSync('ok','pull annullato'); return; }
+    DB=Object.assign(freshDB(),o); mergeSeed(); saveNow(); redrawAll();
+    setSync('ok','pull ok · '+dfull(new Date().toISOString())); toast('dati scaricati dal Gist');
+  }catch(e){ setSync('err','pull fallito · '+e.message); toast('pull fallito: '+e.message); }
+}
+async function ghConnect(){
+  const t=$('#gh-token').value.trim(), g=$('#gh-gist').value.trim();
+  const log=$('#gh-log');
+  if(!t){ log.textContent='Incolla un token.'; return; }
+  GH.token=t; GH.gist=g;
+  log.textContent='Verifica in corso…'; setSync('busy','verifica token…');
+  try{
+    const id=await ghLocate();
+    $('#gh-gist').value=id;
+    log.innerHTML='Collegato. Gist <b class="mono">'+esc(id)+'</b> · file <b class="mono">'+GIST_FILE+'</b>.';
+    setSync('ok','collegato · '+GIST_FILE);
+    toast('GitHub collegato');
+  }catch(e){ log.textContent='Errore: '+e.message+' — controlla che il token abbia lo scope «gist».'; setSync('err','token non valido'); }
+}
+function ghForget(){
+  if(!confirm('Rimuovere token e Gist ID da questo dispositivo? I dati locali restano.')) return;
+  GH.token=''; GH.gist='';
+  $('#gh-token').value=''; $('#gh-gist').value='';
+  $('#gh-log').textContent='Token rimosso.';
+  setSync('off','sync non configurata');
+}
+
+/* ---------------- VISTA DATI ---------------- */
+function renderSet(){
+  const cust=DB.videos.filter(v=>v.custom).length;
+  const bytes=(localStorage.getItem(LSKEY)||'').length;
+  $('#d-info').innerHTML='Video in piano: <b>'+DB.videos.length+'</b> (di cui tuoi: <b>'+cust+'</b>) · '
+    +'Voci «come si fa?»: <b>'+DB.howto.length+'</b> · Spazio usato: <b>'+(bytes/1024).toFixed(1)+' KB</b>';
+  setSync(GH.token?(GH.gist?'ok':'busy'):'off',
+    GH.token?(GH.gist?'collegato · '+GIST_FILE:'token presente, Gist da collegare'):'sync non configurata');
+}
+
+/* ---------------- PWA ---------------- */
+function iconDataURL(size){
+  try{
+    const c=document.createElement('canvas'); c.width=c.height=size;
+    const x=c.getContext('2d'), u=size/180;
+    x.fillStyle='#0a0c0f'; x.fillRect(0,0,size,size);
+    x.strokeStyle='#22d3ee'; x.lineWidth=3*u; x.strokeRect(14*u,14*u,152*u,152*u);
+    x.textAlign='center'; x.font='700 '+(42*u)+'px monospace';
+    x.fillStyle='#e7edf4'; x.fillText('PED',90*u,84*u);
+    x.fillStyle='#22d3ee'; x.fillText('73',90*u,134*u);
+    return c.toDataURL('image/png');
+  }catch(e){ return null; }
+}
+/* Il manifest vero è manifest.webmanifest, accanto a index.html.
+   Se quel file non c'è (hai caricato solo index.html), ne generiamo uno
+   equivalente a runtime come Blob, così l'app resta autosufficiente. */
+async function installManifest(){
+  const link=document.querySelector('link[rel="manifest"]');
+  if(link){
+    try{ const r=await fetch(link.href,{cache:'no-store'}); if(r.ok){ await r.json(); return; } }catch(e){}
+    link.remove();
+  }
+  blobManifest();
+}
+function blobManifest(){
+  try{
+    const base=location.href.replace(/[?#].*$/,'');
+    const scope=base.replace(/[^/]*$/,'');
+    const i192=iconDataURL(192), i512=iconDataURL(512);
+    const m={
+      name:'PED73 — Piano Editoriale', short_name:'PED73',
+      description:'Piano editoriale 8 settimane · 24 esperimenti',
+      start_url:base, scope:scope, display:'standalone', orientation:'portrait',
+      background_color:'#0a0c0f', theme_color:'#0a0c0f', lang:'it',
+      icons:[]
+    };
+    if(i192) m.icons.push({src:i192,sizes:'192x192',type:'image/png',purpose:'any'});
+    if(i512) m.icons.push({src:i512,sizes:'512x512',type:'image/png',purpose:'any'},
+                          {src:i512,sizes:'512x512',type:'image/png',purpose:'maskable'});
+    const url=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}));
+    const l=document.createElement('link'); l.rel='manifest'; l.href=url;
+    document.head.appendChild(l);
+  }catch(e){}
+}
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferredPrompt=e; const b=$('#d-install'); if(b) b.hidden=false; });
+
+/* ---------------- REDRAW ---------------- */
+function redrawAll(){ buildFilterWeeks(); fillEditSelects(); renderPlan(); renderQueue(); renderIdeas(); renderTime(); renderKPI(); renderSet(); }
+function buildFilterWeeks(){
+  const fw=$('#f-week'), cur=fw.value;
+  fw.innerHTML='<option value="">sett. ·tutte</option>';
+  weekList().forEach(w=>fw.insertAdjacentHTML('beforeend','<option value="'+w+'">sett. '+w+'</option>'));
+  fw.value=cur||'';
+}
+
+/* ---------------- EVENTI ---------------- */
+function wire(){
+  $$('nav button').forEach(b=>b.onclick=()=>show(b.dataset.view));
+  $$('[data-close]').forEach(b=>b.onclick=()=>closeOv(b.dataset.close));
+  $$('.ov').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) closeOv(o.id); }));
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') $$('.ov.on').forEach(o=>closeOv(o.id)); });
+
+  $('#weeks').addEventListener('click',e=>{
+    const t=e.target.closest('[data-adv]'); if(t){ advance(t.dataset.adv); return; }
+    const o=e.target.closest('[data-open]'); if(o){ openVideo(o.dataset.open); return; }
+    const w=e.target.closest('[data-toggle]');
+    if(w){
+      const n=+w.dataset.toggle, set=new Set(DB.ui.closed||[]);
+      set.has(n)?set.delete(n):set.add(n);
+      DB.ui.closed=[...set]; save(); renderPlan();
+    }
+  });
+
+  $('#help-btn').onclick=()=>show('guida');
+  $('#g-back').onclick=()=>show('plan');
+  $$('.mtoc a').forEach(a=>a.onclick=e=>{
+    e.preventDefault();
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  $('#add-video').onclick=()=>openEdit(null);
+  $('#de-save').onclick=saveEdit;
+  $('#de-swapgo').onclick=()=>{
+    const other=$('#de-swap').value;
+    if(!editId||!other){ toast('scegli un video'); return; }
+    if(!confirm('Scambiare '+editId+' e '+other+'?\n\nSi scambiano id, settimana e giorno. Contenuto e avanzamento restano col proprio video.')) return;
+    const a=editId, b=other;
+    if(swapVideos(a,b)){ saveNow(); closeOv('ov-edit'); redrawAll(); toast(a+' ⇄ '+b); }
+  };
+  $('#de-del').onclick=delVideo;
+
+  /* --- coda --- */
+  $('#q-add').onclick=()=>{
+    const id=$('#q-pick').value;
+    if(!id){ toast('scegli un video'); return; }
+    qAdd(id); toast(id+' in coda');
+  };
+  $('#q-fill').onclick=()=>{
+    let n=0; sortedVideos().forEach(v=>{ if(st(v.id).s===2&&qAdd(v.id,true)) n++; });
+    saveNow(); renderQueue(); toast(n?('aggiunti '+n+' video'):'nessun montato fuori dalla coda');
+  };
+  const ql=$('#q-list');
+  ql.addEventListener('pointerdown',qDown);
+  ql.addEventListener('click',e=>{
+    const u=e.target.closest('[data-up]');   if(u){ qMove(u.dataset.up,-1); return; }
+    const d=e.target.closest('[data-down]'); if(d){ qMove(d.dataset.down,1); return; }
+    const p=e.target.closest('[data-qpub]');
+    if(p){
+      const q=DB.queue.find(x=>x.q===p.dataset.qpub); if(!q) return;
+      if(q.id){ const s=st(q.id); s.s=3; if(!s.dates[3]) s.dates[3]=new Date().toISOString(); }
+      DB.queue=DB.queue.filter(x=>x.q!==p.dataset.qpub);
+      saveNow(); renderQueue(); renderPlan(); renderTime(); toast((q.id||'voce')+' → PUBBLICATO');
+      return;
+    }
+    const x=e.target.closest('[data-qdel]');
+    if(x){ DB.queue=DB.queue.filter(y=>y.q!==x.dataset.qdel); saveNow(); renderQueue(); }
+  });
+  document.addEventListener('touchmove',e=>{ if(QD&&QD.active) e.preventDefault(); },{passive:false});
+
+  /* --- idee --- */
+  $('#i-add').onclick=ideaSave;
+  $('#i-search').oninput=renderIdeas;
+  $('#i-title').addEventListener('keydown',e=>{ if(e.key==='Enter') ideaSave(); });
+  $('#i-list').addEventListener('click',e=>{
+    const p=e.target.closest('[data-ipro]'); if(p){ ideaPromote(p.dataset.ipro); return; }
+    const m=e.target.closest('[data-ied]');  if(m){ ideaLoad(m.dataset.ied); return; }
+    const d=e.target.closest('[data-idel]');
+    if(d){
+      if(!confirm('Eliminare questa idea?')) return;
+      DB.ideas=DB.ideas.filter(x=>x.i!==d.dataset.idel);
+      if(ideaEditing===d.dataset.idel){ ideaEditing=null; $('#i-add').textContent='+ AGGIUNGI'; }
+      saveNow(); renderIdeas();
+    }
+  });
+
+  $('#k-add').onclick=()=>{
+    DB.howto.push({t:new Date().toISOString(),n:$('#k-note').value.trim()});
+    $('#k-note').value=''; saveNow(); renderKPI(); toast('+1 · totale '+DB.howto.length);
+  };
+
+  $('#d-exp').onclick=exportJSON;
+  $('#d-imp').onclick=()=>$('#d-file').click();
+  $('#d-file').onchange=e=>{ if(e.target.files[0]) importJSON(e.target.files[0]); e.target.value=''; };
+  $('#d-seed').onclick=()=>{ const n=mergeSeed(true); redrawAll(); toast(n?('reinseriti '+n+' video'):'nessun video mancante'); };
+  $('#d-reset').onclick=()=>{
+    if(!confirm('Azzerare stato, note, contatore, coda, idee e video tuoi? Il piano dei 24 torna da zero.')) return;
+    DB=freshDB(); mergeSeed(true); saveNow(); redrawAll(); toast('azzerato');
+  };
+  $('#d-install').onclick=async()=>{ if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt=null; $('#d-install').hidden=true; } };
+
+  const openGH=()=>{ $('#gh-token').value=GH.token; $('#gh-gist').value=GH.gist; $('#gh-fname').textContent=GIST_FILE; $('#gh-log').textContent=''; openOv('ov-gh'); };
+  $('#s-setup').onclick=openGH; $('#s-setup2').onclick=openGH;
+  $('#s-push').onclick=ghPush;  $('#s-push2').onclick=ghPush;
+  $('#s-pull').onclick=ghPull;  $('#s-pull2').onclick=ghPull;
+  $('#gh-save').onclick=ghConnect;
+  $('#gh-forget').onclick=ghForget;
+}
+
+/* ---------------- INIT ---------------- */
+load();
+buildFilters(); fillEditSelects(); wire();
+renderPlan(); renderQueue(); renderIdeas(); renderTime(); renderKPI(); renderSet();
+setSync(GH.token?(GH.gist?'ok':'busy'):'off',
+  GH.token?(GH.gist?'collegato · '+GIST_FILE:'token presente, Gist da collegare'):'sync non configurata');
+installManifest();
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{ navigator.serviceWorker.register('./sw.js').catch(()=>{}); });
+}
+window.addEventListener('beforeunload',saveNow);
+document.addEventListener('visibilitychange',()=>{ if(document.hidden) saveNow(); });
+</script>
+</body>
+</html>
